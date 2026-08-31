@@ -27,6 +27,7 @@
 
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
         <cucumber.version>7.15.0</cucumber.version>
+        <lombok.version>1.18.46</lombok.version>
     </properties>
 
     <modules>
@@ -89,4 +90,22 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

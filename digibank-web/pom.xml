@@ -20,6 +20,18 @@
             <artifactId>transfer-module</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.m2ibank</groupId>
+            <artifactId>common-module</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.m2ibank</groupId>
+            <artifactId>customer-module</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.m2ibank</groupId>
+            <artifactId>account-module</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>

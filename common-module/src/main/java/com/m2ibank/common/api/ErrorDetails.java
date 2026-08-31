@@ -1,11 +1,11 @@
-package com.m2ibank.common.exception;
+package com.m2ibank.common.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 
 @Data
@@ -15,7 +15,7 @@ import java.util.Map;
 public class ErrorDetails {
 
     @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private Instant timestamp = Instant.now();
     private int status;
     private String error;
     private String message;
