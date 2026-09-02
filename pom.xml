@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.12</version>
+        <version>3.5.14</version>
         <relativePath/>
     </parent>
 
@@ -27,6 +27,9 @@
 
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
         <postgresql.version>42.7.12</postgresql.version>
+        <spring-data-bom.version>2025.0.12</spring-data-bom.version>
+        <spring-framework.version>6.2.19</spring-framework.version>
+        <tomcat.version>10.1.55</tomcat.version>
         <cucumber.version>7.15.0</cucumber.version>
         <lombok.version>1.18.46</lombok.version>
     </properties>
