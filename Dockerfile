@@ -8,8 +8,8 @@ COPY transfer-module transfer-module
 COPY digibank-web digibank-web
 RUN mvn -B -DskipTests package
 
-FROM eclipse-temurin:17-jre
-RUN addgroup --system digibank && adduser --system --ingroup digibank digibank
+FROM eclipse-temurin:17-jre-alpine
+RUN apk upgrade --no-cache && addgroup -S digibank && adduser -S -G digibank digibank
 WORKDIR /app
 COPY --from=build /workspace/digibank-web/target/digibank-web-1.0.0-SNAPSHOT.jar app.jar
 USER digibank
