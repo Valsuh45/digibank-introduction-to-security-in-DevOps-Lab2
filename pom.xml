@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
-        <postgresql.version>42.7.11</postgresql.version>
+        <postgresql.version>42.7.12</postgresql.version>
         <cucumber.version>7.15.0</cucumber.version>
         <lombok.version>1.18.46</lombok.version>
     </properties>
