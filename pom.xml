@@ -27,7 +27,7 @@
 
         <jackson-bom.version>2.21.4</jackson-bom.version>
         <micrometer.version>1.15.12</micrometer.version>
-        <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
+        <springdoc-openapi.version>2.8.16</springdoc-openapi.version>
         <postgresql.version>42.7.12</postgresql.version>
         <spring-data-bom.version>2025.0.12</spring-data-bom.version>
         <spring-framework.version>6.2.19</spring-framework.version>
