@@ -20,5 +20,6 @@ public class ErrorDetails {
     private String error;
     private String message;
     private String path;
-    private Map<String, String> validationErrors;
+    @Builder.Default
+    private Map<String, String> validationErrors = Map.of();
 }

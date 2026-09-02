@@ -1,6 +1,11 @@
 package com.m2ibank.common.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,5 +40,17 @@ class ApiResponseTest {
 
         assertTrue(response.isSuccess());
         assertNotNull(response.getTimestamp());
+    }
+
+    @Test
+    void errorResponseSerializesOnlyPublicContractFields() {
+        ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
+
+        JsonNode json = objectMapper.valueToTree(ApiResponse.error("Transfer rejected"));
+
+        Set<String> fieldNames = new HashSet<>();
+        json.fieldNames().forEachRemaining(fieldNames::add);
+        assertEquals(Set.of("success", "message", "data", "timestamp"), fieldNames);
+        assertEquals("Transfer rejected", json.get("message").asText());
     }
 }

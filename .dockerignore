@@ -1,0 +1,11 @@
+.git
+.github
+.idea
+.vscode
+**/target
+**/.mvn
+*.log
+.env
+.env.*
+docker-compose.override.yml
+docs/evidence/screenshots
