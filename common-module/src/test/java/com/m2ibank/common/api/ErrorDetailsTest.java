@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,24 @@ class ErrorDetailsTest {
                 .path("/api/transfers")
                 .validationErrors(Map.of("amount", "must be positive"))
                 .build();
+
+        assertEquals(Map.of("amount", "must be positive"), errorDetails.getValidationErrors());
+    }
+
+    @Test
+    void validationErrorsAreDefensivelyCopied() {
+        Map<String, String> validationErrors = new HashMap<>();
+        validationErrors.put("amount", "must be positive");
+
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .status(400)
+                .error("Bad Request")
+                .message("Request validation failed")
+                .path("/api/transfers")
+                .validationErrors(validationErrors)
+                .build();
+
+        validationErrors.put("accountNumber", "must be valid");
 
         assertEquals(Map.of("amount", "must be positive"), errorDetails.getValidationErrors());
     }
