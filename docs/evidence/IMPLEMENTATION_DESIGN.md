@@ -2,7 +2,7 @@
 
 ## Scope
 
-This slice assembles the modular Spring Boot application without implementing the customer, account, or transfer domains. It owns the application entry point, runtime configuration, HTTP error boundary, API documentation, database migrations, container packaging, CI, integration tests, and the audit-evidence workflow.
+This document explains the implemented DigiBank modular monolith. It covers the application entry point, runtime configuration, domain modules, HTTP error boundary, API documentation, database migrations, container packaging, CI, integration tests, and audit-evidence workflow.
 
 ## Runtime Assembly
 
@@ -18,12 +18,12 @@ PostgreSQL is the development and container database. Credentials are supplied t
 
 Flyway V1 creates `customers`, `bank_accounts`, and `transfers` with primary keys, uniqueness constraints, foreign keys, non-negative monetary constraints, status fields, and lookup indexes. V2 inserts deterministic demonstration customers, accounts, and one successful transfer without embedding credentials. SQL remains compatible with PostgreSQL and H2 PostgreSQL mode.
 
-Before final verification, migrations are compared with any domain entities added concurrently. Domain source files remain outside this slice's ownership.
+Migrations are kept aligned with the customer, account, and transfer entities. Hibernate validates the schema at startup so schema drift is caught during tests, local runs, and CI.
 
 ## Delivery and Evidence
 
 The Docker image uses a Maven build stage and a Java 17 runtime stage, runs as an unprivileged user, and exposes an application health check. Docker Compose requires `POSTGRES_PASSWORD`, waits for PostgreSQL health, and configures the application exclusively through environment variables.
 
-GitHub Actions runs `mvn clean verify`, uploads test reports as audit artifacts, and builds the Docker image. Cucumber exercises available end-to-end platform behavior. Business lifecycle scenarios are added only when the corresponding domain endpoints exist, so CI does not report false failures for another agent's unfinished module.
+GitHub Actions runs `mvn clean verify`, scans the repository filesystem, scans the built Docker image, and starts the Docker Compose stack for a smoke test. Cucumber exercises transfer behavior through the Spring service layer, while the Compose smoke test verifies real HTTP health, OpenAPI, and transfer endpoints.
 
 Audit commands and expected evidence are recorded in `docs/evidence/README.md`; generated logs and screenshots are intentionally not committed by default.
