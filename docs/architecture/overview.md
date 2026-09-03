@@ -4,11 +4,11 @@
 
 DigiBank is a **modular monolith**.
 
-It is not a microservices system. The repository has multiple Maven modules, but they are packaged into one Spring Boot application and deployed as one runtime service.
+The repository has multiple Maven modules, but they are packaged into one Spring Boot application and deployed as one runtime service.
 
 ## Why This Matters
 
-A modular monolith gives the team clean code boundaries without the operational complexity of microservices. Each module has a focused responsibility, but the application still starts, tests, scans, and deploys as one unit.
+A modular monolith gives the team clean code boundaries while keeping the runtime simple. Each module has a focused responsibility, but the application still starts, tests, scans, and deploys as one unit.
 
 This is the right fit for Workshop 1 because the goal is to demonstrate secure DevOps foundations, not distributed service infrastructure.
 
