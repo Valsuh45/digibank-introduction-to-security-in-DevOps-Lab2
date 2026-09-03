@@ -27,6 +27,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the account service workflow.
+ *
+ * <p>These tests cover account creation, validation, lookup behavior, generated-number collision retry,
+ * balance updates, and not-found handling. They use mocks so service rules can be checked without a real
+ * database.</p>
+ */
 @ExtendWith(MockitoExtension.class)
 class BankAccountServiceImplTest {
 

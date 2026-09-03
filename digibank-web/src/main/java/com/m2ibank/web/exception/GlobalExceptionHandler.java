@@ -20,6 +20,17 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Central REST exception handler for the DigiBank API.
+ *
+ * <p>This advice converts domain exceptions, validation failures, unreadable request bodies, and
+ * unexpected errors into consistent {@link ApiResponse} JSON payloads. Centralizing this logic keeps
+ * controllers small and makes the API behavior predictable.</p>
+ *
+ * <p>Security matters here: known business errors return clear client-facing messages, but unexpected
+ * failures are logged server-side and returned as a generic message. That prevents stack traces,
+ * database errors, and implementation details from leaking to callers.</p>
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

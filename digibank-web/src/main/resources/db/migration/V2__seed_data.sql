@@ -1,3 +1,9 @@
+-- Seed data for the DigiBank workshop.
+--
+-- This migration creates two active customers, one account for each customer, and one successful transfer
+-- between the seeded accounts. The data gives local runs, integration tests, and CI smoke tests stable
+-- records to query without relying on manual setup.
+--
 INSERT INTO customers (first_name, last_name, email, identity_number, status, created_at)
 VALUES
     ('Alice', 'Nkem', 'alice.nkem@example.test', 'DB-CUST-0001', 'ACTIVE', '2026-01-15T09:00:00Z'),

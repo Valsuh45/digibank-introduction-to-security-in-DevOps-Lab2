@@ -19,6 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller for account-related API endpoints.
+ *
+ * <p>This class is the HTTP entry point for creating accounts, reading one account, looking up an
+ * account by its generated account number, and listing all accounts owned by one customer. It keeps HTTP
+ * status codes and response envelopes close to the web layer while leaving business decisions to
+ * {@link BankAccountService}.</p>
+ *
+ * <p>Validation annotations protect the service layer from malformed path variables and request bodies.
+ * The global exception handler turns validation and domain failures into consistent JSON responses.</p>
+ */
 @Validated
 @RestController
 @RequestMapping("/api/v1/accounts")

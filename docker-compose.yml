@@ -1,3 +1,10 @@
+#
+# Local Docker Compose stack for DigiBank.
+#
+# Compose starts PostgreSQL first, waits for it to become healthy, then starts the Spring Boot
+# application with the dev profile. The database password must be supplied through POSTGRES_PASSWORD;
+# there is no committed default password, which keeps local and CI runs safer.
+#
 services:
   postgres:
     image: postgres:15-alpine

@@ -1,3 +1,9 @@
+# Main Spring Boot configuration for DigiBank.
+#
+# Database connection values come from environment variables so credentials are not committed to the
+# repository. Hibernate validates the schema instead of creating it because Flyway owns database changes.
+# Server error settings avoid exposing exception names, messages, or stack traces to API clients.
+#
 spring:
   application:
     name: digibank

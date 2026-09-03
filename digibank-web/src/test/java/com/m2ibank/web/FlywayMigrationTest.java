@@ -10,6 +10,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Integration test for database migrations and seed data.
+ *
+ * <p>This test proves Flyway applies the expected migration versions and creates the workshop baseline:
+ * customers, accounts, transfer history, and account-to-customer links.</p>
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 class FlywayMigrationTest {

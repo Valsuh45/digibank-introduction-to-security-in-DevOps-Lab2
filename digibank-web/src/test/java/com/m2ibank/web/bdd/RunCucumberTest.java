@@ -8,6 +8,12 @@ import org.junit.platform.suite.api.Suite;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
+/**
+ * JUnit Platform suite that runs the Cucumber feature files.
+ *
+ * <p>The suite points Cucumber at the feature resources and the step-definition package. It gives the
+ * workshop a readable behavior-driven test for transfer success and insufficient-funds rejection.</p>
+ */
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")

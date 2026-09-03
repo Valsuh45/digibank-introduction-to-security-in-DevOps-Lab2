@@ -6,6 +6,16 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
+/**
+ * Request body used to execute a transfer between two accounts.
+ *
+ * <p>The client supplies source account number, target account number, amount, and an optional
+ * description. The server creates the transfer reference, status, and execution time so trusted audit
+ * fields cannot be forged by a caller.</p>
+ *
+ * <p>Bean Validation checks the simple shape of the request. The service performs the deeper business
+ * checks, such as preventing transfers to the same account and rejecting insufficient balances.</p>
+ */
 public record TransferRequestDto(
         @NotBlank(message = "Source account number is required")
         String sourceAccountNumber,

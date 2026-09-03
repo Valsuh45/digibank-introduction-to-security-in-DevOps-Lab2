@@ -10,6 +10,12 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Validation tests for customer registration requests.
+ *
+ * <p>The tests confirm that valid customer data passes and missing, malformed, or overlong fields fail
+ * before the request reaches the service layer.</p>
+ */
 class CustomerRequestDtoValidationTest {
 
     private static Validator validator;

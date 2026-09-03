@@ -17,6 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * Step definitions for the transfer behavior scenarios.
+ *
+ * <p>The steps use real Spring services against the test profile. They prove that seeded accounts can
+ * transfer money, balances move atomically, insufficient funds are rejected, and failed transfers leave
+ * the source balance unchanged.</p>
+ */
 public class TransferStepDefinitions {
 
     @Autowired

@@ -16,6 +16,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for money transfer endpoints.
+ *
+ * <p>This class exposes transfer execution, transfer lookup, and account transaction history through
+ * {@code /api/v1/transfers}. It keeps HTTP response creation at the edge of the application and delegates
+ * money movement rules to {@link TransferService}.</p>
+ *
+ * <p>The create endpoint uses request-body validation before calling the service. That helps reject
+ * missing account numbers, missing amounts, non-positive amounts, and overlong descriptions early.</p>
+ */
 @RestController
 @RequestMapping("/api/v1/transfers")
 @RequiredArgsConstructor

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven build file for the account module.
+
+  This module owns account creation, generated account numbers, account lookup, balance updates, and JPA
+  persistence. It depends on the common module for shared exceptions and uses Spring Data JPA and
+  validation to protect account data.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">

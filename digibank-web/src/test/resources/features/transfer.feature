@@ -1,3 +1,9 @@
+# Behavior-driven transfer evidence.
+#
+# These scenarios describe the most important transfer outcomes in plain language. They prove that a
+# normal transfer moves money between seeded accounts and that an excessive transfer is rejected without
+# changing the source balance.
+#
 Feature: Secure money transfers
 
   Scenario: Execute a transfer between seeded accounts

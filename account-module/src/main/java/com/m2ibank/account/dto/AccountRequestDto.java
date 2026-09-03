@@ -8,6 +8,16 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
+/**
+ * Request body used when a client opens a new bank account.
+ *
+ * <p>The record contains only the values the client is allowed to choose: the owning customer, account
+ * type, and opening balance. The server generates the account number, currency, status, and creation
+ * time so clients cannot forge those trusted fields.</p>
+ *
+ * <p>Bean Validation keeps invalid values out of the service layer. Balances must be present, must not
+ * be negative, and must fit the two-decimal money format used by the database schema.</p>
+ */
 public record AccountRequestDto(
         @NotNull(message = "Customer ID is required")
         @Positive(message = "Customer ID must be positive")

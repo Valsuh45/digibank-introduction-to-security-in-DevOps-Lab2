@@ -19,6 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Default transfer service implementation.
+ *
+ * <p>This class performs the full money-movement workflow in one transaction: validate the request,
+ * resolve source and target accounts, check the source balance, update both balances, save the account
+ * changes, create the transfer audit record, and return a response DTO.</p>
+ *
+ * <p>The transaction is important for security and correctness. If any step fails, the debit, credit,
+ * and audit record are rolled back together so the system does not store half-completed transfers.</p>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

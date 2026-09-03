@@ -15,6 +15,17 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * JPA entity for a DigiBank account.
+ *
+ * <p>The entity stores the account number, balance, currency, account type, status, creation time, and
+ * owning customer id. It is mapped to the {@code bank_accounts} table and mirrors the constraints used
+ * by the Flyway schema.</p>
+ *
+ * <p>Account numbers, currency, type, creation time, and customer ownership are immutable after
+ * creation. Balance is the only mutable business value here, and {@link #setBalance(BigDecimal)}
+ * rejects negative balances so invalid money state cannot be saved accidentally.</p>
+ */
 @Entity
 @Table(name = "bank_accounts")
 public class BankAccount {

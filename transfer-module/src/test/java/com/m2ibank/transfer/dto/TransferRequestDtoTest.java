@@ -9,6 +9,12 @@ import java.math.BigDecimal;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Validation tests for transfer requests.
+ *
+ * <p>The tests confirm that complete transfer requests pass and invalid requests, such as blank account
+ * numbers, missing amounts, or non-positive amounts, are rejected at the DTO boundary.</p>
+ */
 class TransferRequestDtoTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();

@@ -12,6 +12,12 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Validation tests for account creation requests.
+ *
+ * <p>These tests prove that valid account requests pass and invalid balances or missing fields are
+ * rejected before the service creates a bank account.</p>
+ */
 class AccountRequestDtoValidationTest {
 
     private static Validator validator;

@@ -23,6 +23,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * MVC tests for customer HTTP endpoints.
+ *
+ * <p>These tests verify request validation, response status codes, response envelopes, and service
+ * delegation at the controller boundary. The service is mocked so the tests stay focused on web behavior.</p>
+ */
 @ExtendWith(MockitoExtension.class)
 class CustomerControllerTest {
 

@@ -4,6 +4,16 @@ import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 
+/**
+ * Generates 12-digit account numbers for newly opened accounts.
+ *
+ * <p>The generator uses {@link SecureRandom} instead of predictable random sources. Account numbers are
+ * not passwords, but predictable identifiers can still help attackers enumerate accounts, so secure
+ * randomness is a sensible default.</p>
+ *
+ * <p>The service layer checks generated candidates against the repository before saving. This class only
+ * creates candidates; it does not know about persistence or uniqueness.</p>
+ */
 @Component
 public class AccountNumberGenerator {
 

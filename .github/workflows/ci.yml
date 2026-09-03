@@ -1,3 +1,10 @@
+# GitHub Actions pipeline for DigiBank.
+#
+# The workflow runs on pushes and pull requests to main. It verifies the Maven build, scans the source
+# tree for vulnerabilities/secrets/misconfigurations, scans the built Docker image, and runs a Docker
+# Compose smoke test against real HTTP endpoints. These remote checks make the DevSecOps evidence less
+# dependent on a single developer machine.
+#
 name: DigiBank CI Pipeline
 
 on:

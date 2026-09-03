@@ -1,3 +1,10 @@
+#
+# Multi-stage Docker build for the DigiBank application.
+#
+# The first stage compiles the Maven reactor and packages the Spring Boot web module. The second stage
+# copies only the runnable jar into a smaller Java 17 Alpine runtime image. The runtime image upgrades
+# Alpine packages and runs the app as an unprivileged user, which reduces the container attack surface.
+#
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 COPY pom.xml .

@@ -22,6 +22,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
+/**
+ * MVC tests for the global exception handler.
+ *
+ * <p>These tests prove not-found errors, business errors, validation failures, and unexpected exceptions
+ * are converted into safe API responses. The unexpected-error case checks that sensitive internal detail
+ * is not leaked to the client.</p>
+ */
 class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;

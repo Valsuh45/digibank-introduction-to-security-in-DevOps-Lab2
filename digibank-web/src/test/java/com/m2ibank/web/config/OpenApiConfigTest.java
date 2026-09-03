@@ -5,6 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Unit test for OpenAPI metadata.
+ *
+ * <p>The test protects the published API title, version, and description so generated documentation
+ * remains clear and does not contain unfinished placeholder text.</p>
+ */
 class OpenApiConfigTest {
 
     @Test

@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Root Maven build file for the DigiBank workshop application.
+
+  This parent POM defines the shared Java version, dependency versions, module order, and compiler
+  settings used by every module. Security-sensitive dependencies are pinned here so vulnerability scan
+  fixes are applied consistently across the whole repository instead of being scattered in child POMs.
+
+  The project is a modular monolith: common shared code builds first, then customer, account, transfer,
+  and finally the web assembly module that packages the runnable Spring Boot application.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">

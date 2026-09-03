@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven build file for the common module.
+
+  This module contains shared API response objects, constants, and domain exceptions used by the other
+  modules. It depends only on common Spring web/validation support, Lombok, and test tooling so it stays
+  small and safe to reuse.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">

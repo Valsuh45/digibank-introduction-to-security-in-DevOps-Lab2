@@ -18,6 +18,16 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+/**
+ * JPA entity for a bank customer.
+ *
+ * <p>The entity maps to the {@code customers} table and stores the personal information needed to open
+ * accounts. Email and identity number are protected with database unique constraints so duplicate
+ * customers are rejected even if two requests arrive at nearly the same time.</p>
+ *
+ * <p>The {@link PrePersist} hook fills safe defaults for status and creation time. The service still
+ * normalizes values before saving so stored customer data stays consistent and easier to search.</p>
+ */
 @Entity
 @Table(
         name = "customers",

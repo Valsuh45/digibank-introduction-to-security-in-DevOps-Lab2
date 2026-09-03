@@ -1,3 +1,9 @@
+# Git ignore rules for the DigiBank repository.
+#
+# These entries keep compiled classes, packaged archives, Maven target directories, IDE metadata, and JVM
+# crash logs out of version control. That keeps pull requests focused on source code and helps prevent
+# local machine files from leaking into the repository.
+#
 # Compiled class file
 *.class
 

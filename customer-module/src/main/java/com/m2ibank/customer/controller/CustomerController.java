@@ -21,6 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller for customer API endpoints.
+ *
+ * <p>This class accepts customer creation and lookup requests at {@code /api/v1/customers}. It keeps
+ * HTTP-specific details in one place and delegates customer rules, duplicate checks, normalization, and
+ * persistence to {@link CustomerService}.</p>
+ *
+ * <p>Request validation is applied at the controller boundary. That gives clients clear validation
+ * errors and prevents obviously unsafe or malformed values from entering deeper application layers.</p>
+ */
 @RestController
 @RequestMapping("/api/v1/customers")
 @RequiredArgsConstructor

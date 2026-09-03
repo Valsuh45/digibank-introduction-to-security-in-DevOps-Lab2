@@ -17,6 +17,16 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Default customer service implementation.
+ *
+ * <p>This class creates and reads customers. It normalizes email addresses, trims identity numbers and
+ * names, checks for duplicate email and identity values, and maps saved entities into response DTOs.</p>
+ *
+ * <p>The database unique constraints are treated as a second safety layer. If a race condition gets past
+ * the pre-save checks, the constraint exception is caught and converted into a clear business error
+ * without leaking database details to API clients.</p>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

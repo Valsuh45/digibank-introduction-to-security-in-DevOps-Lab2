@@ -13,6 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Unit tests for detailed API error payloads.
+ *
+ * <p>The tests cover default timestamps, builder behavior, null validation maps, and defensive copying.
+ * Defensive copying is important because validation errors should not change after an error response has
+ * been created.</p>
+ */
 class ErrorDetailsTest {
 
     @Test
