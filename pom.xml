@@ -42,7 +42,7 @@
         <postgresql.version>42.7.12</postgresql.version>
         <spring-data-bom.version>2025.0.12</spring-data-bom.version>
         <spring-framework.version>6.2.19</spring-framework.version>
-        <tomcat.version>10.1.55</tomcat.version>
+        <tomcat.version>10.1.59</tomcat.version>
         <cucumber.version>7.15.0</cucumber.version>
         <lombok.version>1.18.46</lombok.version>
         <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
