@@ -45,6 +45,8 @@
         <tomcat.version>10.1.55</tomcat.version>
         <cucumber.version>7.15.0</cucumber.version>
         <lombok.version>1.18.46</lombok.version>
+        <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
+        <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
     </properties>
 
     <modules>
@@ -126,6 +128,27 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <!-- Static analysis: Java bug patterns plus Find Security Bugs security detectors.
+                 Not bound to a lifecycle phase; run explicitly via `mvn spotbugs:check` (see
+                 docs/security/devsecops.md) so it stays a separate, opt-in CI gate. -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>${findsecbugs-plugin.version}</version>
+                        </plugin>
+                    </plugins>
                 </configuration>
             </plugin>
         </plugins>

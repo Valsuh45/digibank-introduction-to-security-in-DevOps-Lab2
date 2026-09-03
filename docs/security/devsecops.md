@@ -43,8 +43,44 @@ Spring Boot server error settings also disable public exception names, messages,
 GitHub Actions runs:
 
 - Maven verification.
+- SpotBugs static analysis with the Find Security Bugs plugin (Java bug patterns plus security-sensitive
+  code patterns such as injection, weak cryptography, and unsafe reflection/deserialization).
 - Trivy filesystem scan for vulnerabilities, secrets, and misconfigurations.
 - Trivy container image scan.
 - Docker Compose smoke test against health, OpenAPI, and transfer workflow endpoints.
 
 These checks make the security evidence reproducible outside a local developer machine.
+
+## Static Analysis with SpotBugs / Find Security Bugs
+
+SpotBugs is configured in the root `pom.xml` with `effort=Max` and `threshold=Medium`, and the
+Find Security Bugs plugin (`com.h3xstream.findsecbugs:findsecbugs-plugin`) is attached so its security
+detectors run alongside SpotBugs' core Java bug patterns. The plugin is **not** bound to the `verify`
+lifecycle phase, so it does not slow down or gate every local build; it runs as its own explicit step,
+both locally and in the dedicated `static-analysis` CI job.
+
+Run it locally from the repository root:
+
+```bash
+mvn -B compile spotbugs:check
+```
+
+This compiles every module (SpotBugs analyzes bytecode) and fails the build if a Medium-or-higher
+priority bug is found in any module. To just generate the HTML/XML reports without failing the build:
+
+```bash
+mvn -B compile spotbugs:spotbugs
+```
+
+Reports are written per module to `<module>/target/spotbugsXml.xml` (and `target/site/spotbugs.html`
+if the site report is generated).
+
+### Suppressions
+
+Findings that are false positives or accepted risks for this educational codebase are suppressed in
+[`spotbugs-exclude.xml`](../../spotbugs-exclude.xml) at the repository root. Every entry documents why
+the suppression is acceptable — suppressions are scoped as narrowly as possible (by class and bug
+pattern) rather than disabling a detector repository-wide unless the reasoning genuinely applies to
+every instance of that pattern.
+
+
