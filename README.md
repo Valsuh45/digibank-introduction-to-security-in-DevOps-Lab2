@@ -4,13 +4,13 @@ Implementation repository for the **DigiBank** practical labs in the *UCC152-2: 
 
 This repository contains the implemented workshop application and the supporting DevSecOps evidence for a secure, modular banking service.
 
-## Architecture Answer
+## Architecture
 
-**DigiBank is a modular monolith, not a microservices system.**
+**DigiBank is a modular monolith.**
 
-The code is split into Maven modules so each business area has a clear boundary, but the application is packaged and deployed as one Spring Boot service. Customer, account, transfer, and shared code run in the same process, use one database schema, and are released together.
+The code is split into Maven modules so each business area has a clear boundary. Customer, account, transfer, and shared code are packaged together and run as one Spring Boot service with one PostgreSQL database schema.
 
-This design fits Workshop 1 because it gives clean domain separation without adding distributed-system complexity such as service discovery, network calls between services, separate deployments, or multiple databases.
+This design fits Workshop 1 because it gives clean domain separation while keeping local development, testing, scanning, and deployment simple enough to review.
 
 ## Workshop Scope
 
@@ -38,7 +38,7 @@ digibank-parent/
 ├── account-module/     # Account management
 ├── transfer-module/    # Transfers and transaction history
 ├── digibank-web/       # Spring Boot entry point, web configuration, Swagger
-├── docs/               # Architecture, module, API, security, operations, tickets, and archive docs
+├── docs/               # Architecture, module, API, security, operations, and evidence docs
 ├── .github/workflows/  # GitHub Actions workflows
 ├── Dockerfile
 ├── docker-compose.yml
@@ -76,8 +76,7 @@ The application is deployed as a single Spring Boot application while maintainin
 | `docs/modules/` | Module-by-module implementation guide |
 | `docs/operations/` | Local run, Docker, CI, and future deployment notes |
 | `docs/security/` | DevSecOps and security controls |
-| `docs/tickets/` | Active follow-up tickets only |
-| `docs/archive/` | Completed planning and ticket history |
+| `docs/evidence/` | Workshop evidence and implementation notes |
 
 Each Maven module also has its own README:
 
@@ -124,6 +123,30 @@ docker --version
 docker compose version
 ```
 
+## Run Locally With Docker Compose
+
+Start the full application stack with PostgreSQL and the Spring Boot web application:
+
+```bash
+export POSTGRES_PASSWORD=change-me-locally
+docker compose up --build
+```
+
+Useful local URLs:
+
+| URL | Purpose |
+|---|---|
+| `http://localhost:8080/` | Application root |
+| `http://localhost:8080/swagger-ui/index.html` | Swagger UI |
+| `http://localhost:8080/v3/api-docs` | OpenAPI JSON |
+| `http://localhost:8080/actuator/health` | Application health check |
+
+Stop the stack with:
+
+```bash
+docker compose down
+```
+
 ## Contribution Guidelines
 
 - Create a dedicated branch for each feature or task.
@@ -131,17 +154,6 @@ docker compose version
 - Add or update tests with each functional change.
 - Do not commit credentials, `.env` files, IDE configuration, or build artifacts.
 - Ensure the Maven build and tests pass before opening a pull request.
-
-Example commit messages:
-
-```text
-chore: initialize Maven multi-module structure
-feat(customer): add customer creation endpoint
-feat(account): implement account creation service
-feat(transfer): add insufficient funds validation
-test(customer): add customer service unit tests
-docs: update local setup instructions
-```
 
 ## Reference
 

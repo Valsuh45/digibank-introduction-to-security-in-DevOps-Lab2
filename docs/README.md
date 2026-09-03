@@ -9,8 +9,6 @@ This folder contains the project documentation used by developers, reviewers, an
 - `modules/`: explains each Maven module and its responsibility.
 - `operations/`: explains local development, Docker Compose, CI, and future deployment work.
 - `security/`: explains DevSecOps controls and security decisions.
-- `tickets/`: lists active follow-up tickets only.
-- `archive/`: keeps completed plans and tickets as project history.
 - `evidence/`: keeps workshop evidence and implementation notes.
 
 ## Reading Order
