@@ -1,5 +1,6 @@
 package com.m2ibank.common.api;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,13 +23,25 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(description = "Structured error response used for validation, domain, and unexpected request failures.")
 public class ErrorDetails {
 
+    @Schema(description = "Server time when the error response was created.", example = "2026-09-03T11:46:47Z")
     private Instant timestamp = Instant.now();
+
+    @Schema(description = "HTTP status code returned to the client.", example = "400")
     private int status;
+
+    @Schema(description = "Short HTTP error name.", example = "Bad Request")
     private String error;
+
+    @Schema(description = "Safe client-facing explanation of what went wrong.", example = "Validation failed")
     private String message;
+
+    @Schema(description = "Request path that produced the error.", example = "/api/v1/customers")
     private String path;
+
+    @Schema(description = "Field-level validation errors keyed by request field name.")
     private Map<String, String> validationErrors = Map.of();
 
     @Builder
