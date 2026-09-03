@@ -2,7 +2,7 @@
 
 Implementation repository for the **DigiBank** practical labs in the *UCC152-2: Introduction to Security in DevOps* course.
 
-This repository is currently in its initial setup phase. It contains the workshop specification that will guide the implementation of a secure, modular banking application.
+This repository contains the implemented workshop application and the supporting DevSecOps evidence for a secure, modular banking service.
 
 ## Workshop Scope
 
@@ -38,7 +38,7 @@ digibank-parent/
 
 The application will be deployed as a single Spring Boot application while maintaining clear separation between business domains.
 
-## Planned Technology Stack
+## Technology Stack
 
 | Area | Technology |
 |---|---|
@@ -65,20 +65,20 @@ The application will be deployed as a single Spring Boot application while maint
 
 ## Development Status
 
-> **Status: Work in progress**
+> **Status: Implemented for Workshop 1**
 
-The following work is planned:
+The repository now includes:
 
-- [ ] Create the multi-module Maven project structure
-- [ ] Configure PostgreSQL
-- [ ] Implement customer management
-- [ ] Implement account management
-- [ ] Implement transfers and transaction history
-- [ ] Add validation and centralized exception handling
-- [ ] Add OpenAPI / Swagger documentation
-- [ ] Add JUnit and Cucumber tests
-- [ ] Add Docker support
-- [ ] Add GitHub Actions CI workflow
+- [x] Multi-module Maven project structure
+- [x] PostgreSQL configuration through environment variables
+- [x] Customer management
+- [x] Account management
+- [x] Transfers and transaction history
+- [x] Validation and centralized exception handling
+- [x] OpenAPI / Swagger documentation
+- [x] JUnit and Cucumber tests
+- [x] Docker and Docker Compose support
+- [x] GitHub Actions CI with Maven verification, filesystem scanning, container scanning, and Compose smoke testing
 
 ## Prerequisites
 

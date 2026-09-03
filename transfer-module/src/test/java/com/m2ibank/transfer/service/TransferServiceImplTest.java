@@ -29,6 +29,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+/**
+ * Unit tests for transfer business logic.
+ *
+ * <p>These tests protect the most sensitive workflow in the application: moving money between accounts.
+ * They cover successful transfers, same-account rejection, insufficient balance, missing accounts,
+ * description normalization, and transaction-history ordering.</p>
+ */
 @ExtendWith(MockitoExtension.class)
 class TransferServiceImplTest {
 

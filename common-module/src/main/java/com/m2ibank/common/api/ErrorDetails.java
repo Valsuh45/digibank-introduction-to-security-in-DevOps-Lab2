@@ -8,6 +8,17 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.Map;
 
+/**
+ * Detailed error payload used when the API needs more context than {@link ApiResponse}.
+ *
+ * <p>This object keeps the HTTP status, short error name, clear message, request path, timestamp, and
+ * optional field validation errors together. It is useful for predictable error handling because clients
+ * can read the same fields for validation failures and other request problems.</p>
+ *
+ * <p>The validation error map is defensively copied when it is set. That protects the error response
+ * from accidental mutation after it has been created, which is important when several layers may hold
+ * a reference to the original map.</p>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

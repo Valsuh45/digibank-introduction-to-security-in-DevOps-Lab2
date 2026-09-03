@@ -13,6 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Default account service implementation.
+ *
+ * <p>This class owns the main account workflow: validate the request, generate an unused account number,
+ * create the entity, save it, and map it back to a response DTO. Read methods use explicit not-found
+ * exceptions so API callers receive clean errors.</p>
+ *
+ * <p>Write operations are transactional. The transfer module also uses {@link #updateBalance(String,
+ * BigDecimal)} during a larger transfer transaction, so balance changes remain part of the calling
+ * business operation.</p>
+ */
 @Service
 @Transactional(readOnly = true)
 public class BankAccountServiceImpl implements BankAccountService {

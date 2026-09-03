@@ -7,6 +7,18 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+/**
+ * Standard response envelope used by the REST controllers.
+ *
+ * <p>Every successful or failed API call can return the same shape: a success flag, a human-readable
+ * message, optional data, and the time when the response was created. Keeping one envelope makes the
+ * web API easier to test and easier for clients to parse.</p>
+ *
+ * <p>The static factory methods should be preferred over manually building common responses because
+ * they set the success flag and timestamp consistently.</p>
+ *
+ * @param <T> type of the response body stored in {@link #data}
+ */
 @Data
 @Builder
 @NoArgsConstructor

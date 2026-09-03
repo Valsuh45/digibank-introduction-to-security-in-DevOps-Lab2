@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven build file for the transfer module.
+
+  This module owns money transfer execution and transaction history. It depends on the account module so
+  it can update balances, and on the common module so failures use the same safe domain exceptions as the
+  rest of the application.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">

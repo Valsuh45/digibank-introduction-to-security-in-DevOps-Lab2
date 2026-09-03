@@ -13,6 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Integration test for the static homepage.
+ *
+ * <p>The test confirms the root path serves the UI and that the page links to both human-readable
+ * Swagger documentation and machine-readable OpenAPI JSON.</p>
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

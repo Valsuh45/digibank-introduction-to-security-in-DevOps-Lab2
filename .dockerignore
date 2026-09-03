@@ -1,3 +1,9 @@
+# Docker build ignore rules for DigiBank.
+#
+# The Docker build context excludes Git metadata, IDE files, Maven target directories, logs, environment
+# files, local Compose overrides, and evidence screenshots. This keeps images smaller and avoids sending
+# local secrets or generated artifacts into the container build.
+#
 .git
 .github
 .idea

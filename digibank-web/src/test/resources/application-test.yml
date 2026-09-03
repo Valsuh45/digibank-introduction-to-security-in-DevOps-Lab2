@@ -1,3 +1,9 @@
+# Test profile configuration for DigiBank.
+#
+# Tests use an in-memory H2 database in PostgreSQL compatibility mode so the Maven build can run without
+# a local PostgreSQL server. Flyway still runs, which keeps tests close to the real schema, and logging is
+# reduced so test output stays focused on failures.
+#
 spring:
   datasource:
     url: jdbc:h2:mem:digibank;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1

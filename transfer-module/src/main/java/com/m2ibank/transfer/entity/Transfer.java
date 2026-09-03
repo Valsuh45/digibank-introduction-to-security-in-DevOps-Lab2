@@ -16,6 +16,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * JPA entity that records a completed transfer.
+ *
+ * <p>Transfer rows are audit records. After creation, the reference, accounts, amount, status, execution
+ * date, and description are marked as non-updatable so saved history cannot be edited through normal JPA
+ * updates.</p>
+ *
+ * <p>Indexes on source and target account numbers support transaction-history lookups. The factory
+ * method currently creates successful transfers because failed transfer attempts are rejected before an
+ * audit row is saved.</p>
+ */
 @Entity
 @Table(
         name = "transfers",

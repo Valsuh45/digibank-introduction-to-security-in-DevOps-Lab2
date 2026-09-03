@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+/**
+ * Unit tests for the base DigiBank exception type.
+ *
+ * <p>The tests verify that messages and causes are preserved. That matters because services throw domain
+ * exceptions and the web layer converts them into safe API responses while logs can still keep the cause.</p>
+ */
 class DigiBankExceptionTest {
 
     @Test

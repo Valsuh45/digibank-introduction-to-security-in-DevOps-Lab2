@@ -1,1 +1,6 @@
+# Mockito plugin configuration for web module tests.
+#
+# The subclass mock maker avoids Java agent self-attachment during unit tests. That keeps the test setup
+# quieter and more compatible with stricter JDK security defaults.
+#
 mock-maker-subclass

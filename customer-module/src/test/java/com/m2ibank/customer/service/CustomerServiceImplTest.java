@@ -22,6 +22,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for customer service rules.
+ *
+ * <p>These tests cover customer creation, email normalization, duplicate email and identity rejection,
+ * database constraint fallback handling, lookups, and response mapping.</p>
+ */
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceImplTest {
 

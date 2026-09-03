@@ -9,6 +9,13 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the shared API response envelope.
+ *
+ * <p>These tests confirm that success and error factory methods set the success flag, message, data, and
+ * timestamp consistently. They also check builder defaults and JSON serialization so every controller
+ * can rely on the same response shape.</p>
+ */
 class ApiResponseTest {
 
     @Test

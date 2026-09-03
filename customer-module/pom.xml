@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven build file for the customer module.
+
+  This module owns customer registration, customer lookup, validation DTOs, JPA persistence, and service
+  rules. It depends on the common module for shared responses and exceptions, plus Spring Data JPA,
+  Spring Web, validation, Lombok, and test tooling.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
