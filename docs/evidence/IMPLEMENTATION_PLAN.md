@@ -1,10 +1,10 @@
 # DigiBank Web and DevSecOps Implementation Plan
 
-**Goal:** Deliver a secure, reproducible Spring Boot assembly and an auditable CI/container path for Workshop 1.
+**Goal:** Record the implemented secure, reproducible Spring Boot assembly and auditable CI/container path for Workshop 1.
 
-**Architecture:** Keep all runtime assembly and delivery concerns in `digibank-web` and root deployment files. PostgreSQL serves dev/container execution, H2 PostgreSQL mode isolates tests, Flyway owns schema state, and web-level tests verify externally visible contracts.
+**Architecture:** DigiBank is a modular monolith. Domain code lives in focused Maven modules, while `digibank-web` assembles them into one Spring Boot runtime. PostgreSQL serves dev/container execution, H2 PostgreSQL mode isolates tests, Flyway owns schema state, and web-level tests verify externally visible contracts.
 
-**Tech stack:** Java 17, Spring Boot 3.2, Spring MVC, Springdoc, Flyway, PostgreSQL, H2, JUnit 5, Cucumber 7, Docker Compose, GitHub Actions.
+**Tech stack:** Java 17, Spring Boot 3.5, Spring MVC, Springdoc, Flyway, PostgreSQL, H2, JUnit 5, Cucumber 7, Docker Compose, GitHub Actions.
 
 **Spec:** `docs/evidence/IMPLEMENTATION_DESIGN.md`
 
@@ -15,13 +15,13 @@
 - Preserve concurrent changes and re-check domain entities before final verification.
 - Return safe API errors without stack traces or internal exception details.
 
-## Tasks
+## Completed Tasks
 
-- [ ] Add web contract tests for homepage, OpenAPI metadata, exception mapping, and application context; run them red.
-- [ ] Add the application entry point, OpenAPI configuration, homepage, and safe global exception handler; run focused tests green.
-- [ ] Add test/dev configuration and Flyway migrations; verify migration and context startup on H2 PostgreSQL mode.
-- [ ] Add Cucumber platform feature, runner, and step definitions; verify it runs through Maven Surefire.
-- [ ] Add a least-privilege multi-stage Dockerfile and environment-driven Compose stack with health checks.
-- [ ] Add CI verification, Docker build, test-report artifact upload, and audit evidence instructions.
-- [ ] Re-scan concurrent domain work and align migrations or add business-flow BDD only if the APIs are available.
-- [ ] Run `mvn clean verify`, configuration checks, Docker static validation/build where available, and inspect the final diff.
+- [x] Add web contract tests for homepage, OpenAPI metadata, exception mapping, and application context.
+- [x] Add the application entry point, OpenAPI configuration, homepage, and safe global exception handler.
+- [x] Add test/dev configuration and Flyway migrations.
+- [x] Add Cucumber transfer scenarios and JUnit suite wiring.
+- [x] Add a least-privilege multi-stage Dockerfile and environment-driven Compose stack with health checks.
+- [x] Add CI verification, filesystem security scanning, container security scanning, and Docker Compose smoke testing.
+- [x] Align migrations with customer, account, and transfer entities.
+- [x] Run `mvn clean verify`, configuration checks, Docker build/smoke checks, and GitHub Actions validation.

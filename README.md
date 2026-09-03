@@ -4,11 +4,19 @@ Implementation repository for the **DigiBank** practical labs in the *UCC152-2: 
 
 This repository contains the implemented workshop application and the supporting DevSecOps evidence for a secure, modular banking service.
 
+## Architecture Answer
+
+**DigiBank is a modular monolith, not a microservices system.**
+
+The code is split into Maven modules so each business area has a clear boundary, but the application is packaged and deployed as one Spring Boot service. Customer, account, transfer, and shared code run in the same process, use one database schema, and are released together.
+
+This design fits Workshop 1 because it gives clean domain separation without adding distributed-system complexity such as service discovery, network calls between services, separate deployments, or multiple databases.
+
 ## Workshop Scope
 
 The objective is to design and implement a first version of **DigiBank**, a fictional digital banking application, using a modular monolithic architecture.
 
-The application will progressively support:
+The application supports:
 
 - Customer management
 - Bank account management
@@ -21,7 +29,7 @@ The application will progressively support:
 
 ## Target Architecture
 
-DigiBank will be implemented as a multi-module Maven project:
+DigiBank is implemented as a multi-module Maven project:
 
 ```text
 digibank-parent/
@@ -30,13 +38,14 @@ digibank-parent/
 ├── account-module/     # Account management
 ├── transfer-module/    # Transfers and transaction history
 ├── digibank-web/       # Spring Boot entry point, web configuration, Swagger
+├── docs/               # Architecture, module, API, security, operations, tickets, and archive docs
 ├── .github/workflows/  # GitHub Actions workflows
 ├── Dockerfile
 ├── docker-compose.yml
 └── pom.xml
 ```
 
-The application will be deployed as a single Spring Boot application while maintaining clear separation between business domains.
+The application is deployed as a single Spring Boot application while maintaining clear separation between business domains.
 
 ## Technology Stack
 
@@ -62,6 +71,21 @@ The application will be deployed as a single Spring Boot application while maint
 | `README.md` | Repository overview and implementation plan |
 | `LICENSE` | Project license |
 | `UCC152-2 Introduction to security in DevOps - Workshop 1 EN.pdf` | Official workshop specification and implementation guide |
+| `docs/architecture/` | Architecture explanation and module boundaries |
+| `docs/api/` | REST API summary and endpoint map |
+| `docs/modules/` | Module-by-module implementation guide |
+| `docs/operations/` | Local run, Docker, CI, and future deployment notes |
+| `docs/security/` | DevSecOps and security controls |
+| `docs/tickets/` | Active follow-up tickets only |
+| `docs/archive/` | Completed planning and ticket history |
+
+Each Maven module also has its own README:
+
+- `common-module/README.md`
+- `customer-module/README.md`
+- `account-module/README.md`
+- `transfer-module/README.md`
+- `digibank-web/README.md`
 
 ## Development Status
 
@@ -126,3 +150,11 @@ All implementation decisions should follow the workshop specification included i
 ```text
 UCC152-2 Introduction to security in DevOps - Workshop 1 EN.pdf
 ```
+
+For a deeper explanation of the current implementation, start with:
+
+- `docs/architecture/overview.md`
+- `docs/api/endpoints.md`
+- `docs/modules/overview.md`
+- `docs/security/devsecops.md`
+- `docs/operations/local-development.md`
