@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs / Find Security Bugs suppression filter.
+
+  Every entry below must include an explanation of why the finding is a false positive or an
+  accepted risk in this educational codebase. Do not add blanket suppressions for a whole bug
+  pattern or class unless the reasoning applies to every instance.
+-->
+<FindBugsFilter xmlns="https://github.com/spotbugs/filter/3.0.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/master/spotbugs/etc/findbugsfilter.xsd">
+
+    <!-- Lombok's generated @Builder holds the raw Map reference passed to validationErrors(...) before
+         build() runs. This is safe here: the all-args constructor that build() calls immediately routes
+         the value through ErrorDetails.setValidationErrors(), which defensively copies it with
+         Map.copyOf(...). The constructed ErrorDetails instance never exposes a mutable reference. -->
+    <Match>
+        <Class name="com.m2ibank.common.api.ErrorDetails$ErrorDetailsBuilder"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- CT_CONSTRUCTOR_THROW flags every constructor that can throw (e.g. Objects.requireNonNull
+         fail-fast checks) as a theoretical finalizer attack vector. That attack only applies to
+         classes with a custom finalize()/Object.finalize() override, which none of DigiBank's classes
+         declare, and none of the flagged classes are meant to be subclassed by untrusted code. Rejecting
+         invalid state early in the constructor is the intended, safer behavior here. -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+</FindBugsFilter>
