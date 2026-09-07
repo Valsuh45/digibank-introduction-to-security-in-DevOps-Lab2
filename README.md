@@ -102,6 +102,7 @@ The repository now includes:
 - [x] JUnit and Cucumber tests
 - [x] Docker and Docker Compose support
 - [x] GitHub Actions CI with Maven verification, filesystem scanning, container scanning, and Compose smoke testing
+- [x] Weekly Dependabot monitoring for Maven and GitHub Actions dependencies
 
 ## Prerequisites
 

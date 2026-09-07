@@ -51,6 +51,16 @@ GitHub Actions runs:
 
 These checks make the security evidence reproducible outside a local developer machine.
 
+## Automated Dependency Updates
+
+Dependabot checks Maven dependencies and GitHub Actions every Monday. Minor and patch updates are
+grouped by ecosystem to keep the pull-request volume manageable, while major updates remain separate
+so breaking changes receive focused review. Each ecosystem may have at most five Dependabot pull
+requests for version updates open at once; GitHub manages security-update pull requests separately.
+
+Dependabot pull requests pass through the same CI pipeline as other changes. The configuration in
+`.github/dependabot.yml` contains no credentials; GitHub provides Dependabot access to the repository.
+
 ## Static Analysis with SpotBugs / Find Security Bugs
 
 SpotBugs is configured in the root `pom.xml` with `effort=Max` and `threshold=Medium`, and the
@@ -82,5 +92,3 @@ Findings that are false positives or accepted risks for this educational codebas
 the suppression is acceptable — suppressions are scoped as narrowly as possible (by class and bug
 pattern) rather than disabling a detector repository-wide unless the reasoning genuinely applies to
 every instance of that pattern.
-
-
