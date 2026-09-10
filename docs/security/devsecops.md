@@ -43,6 +43,7 @@ Spring Boot server error settings also disable public exception names, messages,
 GitHub Actions runs:
 
 - Maven verification.
+- PMD aggregate Java quality gate (priority 1–3, zero allowed violations).
 - SpotBugs static analysis with the Find Security Bugs plugin (Java bug patterns plus security-sensitive
   code patterns such as injection, weak cryptography, and unsafe reflection/deserialization).
 - Trivy filesystem scan for vulnerabilities, secrets, and misconfigurations.
@@ -92,3 +93,35 @@ Findings that are false positives or accepted risks for this educational codebas
 the suppression is acceptable — suppressions are scoped as narrowly as possible (by class and bug
 pattern) rather than disabling a detector repository-wide unless the reasoning genuinely applies to
 every instance of that pattern.
+
+
+## Static Analysis with PMD
+
+The parent POM pins `maven-pmd-plugin` to **3.28.0** and targets Java 17. Run from the
+repository root (JDK 17 and Maven required):
+
+```bash
+mvn -B pmd:aggregate-pmd-check
+```
+
+The aggregate goal analyzes production Java sources across all five modules. It runs
+explicitly, rather than being bound to the normal `verify` lifecycle. The independent
+`pmd` job in `.github/workflows/ci.yml` runs the same command for pushes and pull requests
+to `main`. A single finding at priority **1–3** (1 is most severe) fails the build:
+`failOnViolation=true`, `failurePriority=3`, and `maxAllowedViolations=0`. Analysis errors
+also fail the run. Priorities 4–5 do not fail the gate.
+
+The checked-in [ruleset](../../pmd-ruleset.xml) selects checks for unused locals and
+parameters, resource handling, unsafe control flow, object comparisons, and complexity.
+PMD's default cyclomatic complexity limits apply (method 10, class total 80).
+Style-only checks are omitted. The ruleset explains why private-member unused checks
+are omitted for Lombok/JPA/Spring consumers and why test fixtures are outside this
+initial production-code baseline. Future false positives should have a narrowly scoped
+suppression and an explanation; do not raise the allowed violation count to hide findings.
+
+The aggregate XML report is `target/pmd.xml`; the HTML report is `target/reports/pmd.html`.
+CI uploads these as the `pmd-reports` artifact even when the gate fails.
+
+**CPD decision:** copy/paste detection is deferred to a follow-up. Similar DTOs and mapping
+code across modules need a separately reviewed duplication threshold and exclusions before
+CPD becomes a blocking gate. PMD is the only new gate in this change.

@@ -23,9 +23,13 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -120,6 +124,32 @@ class TransferServiceImplTest {
                 .hasMessage("Transfer amount must be greater than zero");
 
         verifyNoInteractions(accountRepository, transferRepository);
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidRequests")
+    void invalidRequestsAreRejectedBeforeRepositoryAccess(TransferRequestDto request, String message) {
+        assertThatThrownBy(() -> service.executeTransfer(request))
+                .isInstanceOf(InvalidOperationException.class)
+                .hasMessage(message);
+
+        verifyNoInteractions(accountRepository, transferRepository);
+    }
+
+    private static Stream<Arguments> invalidRequests() {
+        String accountsRequired = "Source and target account numbers are required";
+        String positiveAmountRequired = "Transfer amount must be greater than zero";
+        return Stream.of(
+                Arguments.of(null, "Transfer request is required"),
+                Arguments.of(new TransferRequestDto(null, "222", BigDecimal.ONE, null), accountsRequired),
+                Arguments.of(new TransferRequestDto(" ", "222", BigDecimal.ONE, null), accountsRequired),
+                Arguments.of(new TransferRequestDto("111", null, BigDecimal.ONE, null), accountsRequired),
+                Arguments.of(new TransferRequestDto("111", " ", BigDecimal.ONE, null), accountsRequired),
+                Arguments.of(new TransferRequestDto("111", "222", null, null), positiveAmountRequired),
+                Arguments.of(new TransferRequestDto("111", "222", BigDecimal.ONE.negate(), null),
+                        positiveAmountRequired),
+                Arguments.of(new TransferRequestDto("111", "222", BigDecimal.ONE, "x".repeat(256)),
+                        "Transfer description is too long"));
     }
 
     @Test

@@ -46,6 +46,7 @@
         <cucumber.version>7.15.0</cucumber.version>
         <lombok.version>1.18.46</lombok.version>
         <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
     </properties>
 
@@ -128,6 +129,25 @@
                             <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <!-- Explicit aggregate gate, shared by local runs and the PMD CI job. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+                <configuration>
+                    <targetJdk>${java.version}</targetJdk>
+                    <rulesets>
+                        <ruleset>${maven.multiModuleProjectDirectory}/pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                    <includeTests>false</includeTests>
+                    <failOnViolation>true</failOnViolation>
+                    <failurePriority>3</failurePriority>
+                    <maxAllowedViolations>0</maxAllowedViolations>
+                    <printFailingErrors>true</printFailingErrors>
+                    <failOnError>true</failOnError>
+                    <linkXRef>false</linkXRef>
                 </configuration>
             </plugin>
             <!-- Static analysis: Java bug patterns plus Find Security Bugs security detectors.
