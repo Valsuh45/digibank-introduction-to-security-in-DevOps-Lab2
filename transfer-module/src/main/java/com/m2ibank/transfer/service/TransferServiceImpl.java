@@ -104,15 +104,23 @@ public class TransferServiceImpl implements TransferService {
         if (request == null) {
             throw new InvalidOperationException("Transfer request is required");
         }
-        if (request.sourceAccountNumber() == null || request.sourceAccountNumber().isBlank()
-                || request.targetAccountNumber() == null || request.targetAccountNumber().isBlank()) {
-            throw new InvalidOperationException("Source and target account numbers are required");
-        }
-        if (request.amount() == null || request.amount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidOperationException("Transfer amount must be greater than zero");
-        }
+        validateAccountNumbers(request.sourceAccountNumber(), request.targetAccountNumber());
+        validateAmount(request.amount());
         if (request.description() != null && request.description().length() > MAX_DESCRIPTION_LENGTH) {
             throw new InvalidOperationException("Transfer description is too long");
+        }
+    }
+
+    private void validateAccountNumbers(String sourceAccountNumber, String targetAccountNumber) {
+        if (sourceAccountNumber == null || sourceAccountNumber.isBlank()
+                || targetAccountNumber == null || targetAccountNumber.isBlank()) {
+            throw new InvalidOperationException("Source and target account numbers are required");
+        }
+    }
+
+    private void validateAmount(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidOperationException("Transfer amount must be greater than zero");
         }
     }
 
