@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Known Spring Framework 6.2.19 and Spring Boot 3.5.14 CVEs that are temporarily acceptable 
+         for educational purposes. These are awaiting upstream patches.
+         Expires 2026-12-31; remove when Spring patches are available. -->
+    <suppress until="2026-12-31"><cve>CVE-2026-47883</cve></suppress>
+    <suppress until="2026-12-31"><cve>CVE-2026-41001</cve></suppress>
+    <suppress until="2026-12-31"><cve>CVE-2026-40992</cve></suppress>
+</suppressions>

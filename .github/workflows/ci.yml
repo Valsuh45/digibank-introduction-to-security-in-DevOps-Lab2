@@ -98,7 +98,6 @@ jobs:
   dependency-analysis:
     name: OWASP Dependency-Check
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     steps:
       - name: Check out repository
@@ -114,10 +113,18 @@ jobs:
       - name: Run dependency vulnerability scan
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: >-
+        run: >
           mvn -B org.owasp:dependency-check-maven:check
           -DnvdApiKey="${NVD_API_KEY}"
+        continue-on-error: true
 
+      - name: Validate Dependency-Check report exists
+        run: |
+          if [[ ! -f target/dependency-check-report.html ]]; then
+            echo "Dependency-Check failed to generate report"
+            exit 1
+          fi
+        shell: bash
       - name: Upload Dependency-Check report
         if: always()
         uses: actions/upload-artifact@v4

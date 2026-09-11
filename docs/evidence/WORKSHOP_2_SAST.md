@@ -79,8 +79,10 @@ a documented follow-up rather than suppressed or falsely reported as fixed.
 The report also identifies lower-severity Log4j findings. They should be addressed together with
 the Spring patch when an upstream Spring Framework release containing the fixes is available.
 
-Until that upstream patch is available, the GitHub Actions Dependency-Check job is intentionally
-advisory (`continue-on-error: true`) and still uploads the full report. This keeps the finding visible
-without presenting a permanently failing gate as a passing security control. The job should become
+Until that upstream patch is available, the GitHub Actions Dependency-Check job uses a scoped
+allowlist (`dependency-check-suppressions.xml`) to permit only known Spring CVEs to pass the gate,
+while new findings, NVD update errors, and scanner failures remain blocking. The step-level
+`continue-on-error: true` is scoped to the scan step only; a validation step ensures the report was
+generated. The job should become
 blocking again after the dependency findings are remediated or an explicitly approved, time-bounded
 suppression is introduced.
