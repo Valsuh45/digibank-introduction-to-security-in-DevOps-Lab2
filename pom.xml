@@ -48,6 +48,11 @@
         <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
+        <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
+        <dependency-check-maven.version>12.1.0</dependency-check-maven.version>
+        <pitest-maven.version>1.19.0</pitest-maven.version>
+        <pitest-junit5-plugin.version>1.2.2</pitest-junit5-plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
     </properties>
 
     <modules>
@@ -118,6 +123,60 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check-maven.version}</version>
+                <configuration>
+                    <format>HTML</format>
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
+                    <skipProvidedScope>true</skipProvidedScope>
+                    <skipTestScope>true</skipTestScope>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                    <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppressions.xml</suppressionFile>
+                    <!-- Use centralized NVD data directory for caching across runs -->
+                    <dataDirectory>${java.io.tmpdir}/dependency-check-data</dataDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest-maven.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>${pitest-junit5-plugin.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>com.m2ibank.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.m2ibank.*</param>
+                    </targetTests>
+                    <threads>4</threads>
+                    <outputFormats>
+                        <param>HTML</param>
+                        <param>XML</param>
+                    </outputFormats>
+                    <timestampedReports>false</timestampedReports>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

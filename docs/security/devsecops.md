@@ -46,11 +46,36 @@ GitHub Actions runs:
 - PMD aggregate Java quality gate (priority 1–3, zero allowed violations).
 - SpotBugs static analysis with the Find Security Bugs plugin (Java bug patterns plus security-sensitive
   code patterns such as injection, weak cryptography, and unsafe reflection/deserialization).
+- OWASP Dependency-Check vulnerability scan (blocks on CVSS ≥ 7, except for known Spring CVEs with time-bounded suppressions).
+- PITest mutation testing (validates test coverage of business logic).
 - Trivy filesystem scan for vulnerabilities, secrets, and misconfigurations.
 - Trivy container image scan.
 - Docker Compose smoke test against health, OpenAPI, and transfer workflow endpoints.
 
 These checks make the security evidence reproducible outside a local developer machine.
+
+## Workshop 2 SAST Commands
+
+The Workshop 2 analysis chain is configured in the parent POM. The normal build remains independent
+of external scanner services; run the analysis explicitly from the repository root:
+
+```bash
+mvn -B clean install -DskipTests
+mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
+mvn -B org.pitest:pitest-maven:mutationCoverage
+mvn -B verify sonar:sonar \
+  -Dsonar.projectKey=digibank-parent \
+  -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
+  -Dsonar.token="$SONAR_TOKEN"
+```
+
+Dependency-Check produces `target/dependency-check-report.html`; PITest produces reports under
+`target/pit-reports`. SonarQube requires a running local/server instance and a token supplied through
+the environment. Tokens and NVD credentials must never be committed to Maven files, YAML files, or
+the repository.
+
+The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
+The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a developer machine is not reachable from a hosted runner.
 
 ## Automated Dependency Updates
 

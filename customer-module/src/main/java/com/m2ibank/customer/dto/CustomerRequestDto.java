@@ -19,12 +19,14 @@ import jakarta.validation.constraints.Size;
 @Schema(description = "Request body used to register a new DigiBank customer.")
 public record CustomerRequestDto(
         @NotBlank(message = "First name is required")
-        @Size(max = 100, message = "First name must not exceed 100 characters")
+        @Size(min = 2, max = 100, message = "First name must contain between 2 and 100 characters")
+        @Pattern(regexp = "^[\\p{L}](?:[\\p{L}]|[ .'-][\\p{L}])*$", message = "First name contains invalid characters")
         @Schema(description = "Customer's legal first name.", example = "Amina", maxLength = 100)
         String firstName,
 
         @NotBlank(message = "Last name is required")
-        @Size(max = 100, message = "Last name must not exceed 100 characters")
+        @Size(min = 2, max = 100, message = "Last name must contain between 2 and 100 characters")
+        @Pattern(regexp = "^[\\p{L}](?:[\\p{L}]|[ .'-][\\p{L}])*$", message = "Last name contains invalid characters")
         @Schema(description = "Customer's legal last name.", example = "Ndi", maxLength = 100)
         String lastName,
 
@@ -36,11 +38,8 @@ public record CustomerRequestDto(
         String email,
 
         @NotBlank(message = "Identity number is required")
-        @Size(max = 100, message = "Identity number must not exceed 100 characters")
-        @Pattern(
-                regexp = "^[A-Z0-9][A-Z0-9-]{3,99}$",
-                message = "Identity number must contain only letters, digits and hyphens"
-        )
+        @Size(min = 5, max = 100, message = "Identity number must contain between 5 and 100 characters")
+        @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Identity number contains invalid characters")
         @Schema(description = "Government or bank-approved identity number used for customer checks.",
                 example = "CMR-1998-00001", maxLength = 100)
         String identityNumber) {
