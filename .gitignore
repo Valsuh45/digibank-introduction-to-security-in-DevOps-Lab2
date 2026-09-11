@@ -33,6 +33,9 @@ replay_pid*
 target/
 **/target/
 
+# Generated DAST reports (Postman/Newman and ZAP outputs)
+dast/reports/
+
 # IDE files
 .idea/
 *.iml

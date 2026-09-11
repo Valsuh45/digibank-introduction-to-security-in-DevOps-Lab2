@@ -3,6 +3,7 @@ package com.m2ibank.customer.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -36,6 +37,10 @@ public record CustomerRequestDto(
 
         @NotBlank(message = "Identity number is required")
         @Size(max = 100, message = "Identity number must not exceed 100 characters")
+        @Pattern(
+                regexp = "^[A-Z0-9][A-Z0-9-]{3,99}$",
+                message = "Identity number must contain only letters, digits and hyphens"
+        )
         @Schema(description = "Government or bank-approved identity number used for customer checks.",
                 example = "CMR-1998-00001", maxLength = 100)
         String identityNumber) {

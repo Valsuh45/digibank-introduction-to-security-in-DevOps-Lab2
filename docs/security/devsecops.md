@@ -125,3 +125,19 @@ CI uploads these as the `pmd-reports` artifact even when the gate fails.
 **CPD decision:** copy/paste detection is deferred to a follow-up. Similar DTOs and mapping
 code across modules need a separately reviewed duplication threshold and exclusions before
 CPD becomes a blocking gate. PMD is the only new gate in this change.
+
+## Dynamic Analysis (DAST)
+
+Workshop 3 adds runtime security analysis. The API error handler no longer echoes internal exception
+messages: not-found and business failures return generic text (`Resource not found`,
+`Request could not be processed`) while the real reason is logged server-side. This stops callers from
+enumerating identifiers or probing for the existence of data. Customer duplicate and not-found
+messages were made generic, and the identity number now has a structural `@Pattern` constraint.
+
+Interactive API documentation is enabled in the `dev` profile and disabled in the `prod` and `ci`
+profiles so the exposed surface is reduced outside local development.
+
+DAST artifacts (a Newman-ready Postman validation collection, an environment, and OWASP ZAP notes)
+live under `dast/`. A dedicated CI workflow (`.github/workflows/digibank-dast.yml`) replays the Newman
+collection as a blocking check and runs an OWASP ZAP baseline as an observation-level scan. See
+[`dast.md`](dast.md) for the full findings, remediations, and revalidation.
