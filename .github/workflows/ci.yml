@@ -120,7 +120,7 @@ jobs:
 
       - name: Run dependency vulnerability scan
         env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          NVD_API_KEY: 669257F7-33DF-4C70-BC26-D2F262D8BA94
         run: >
           mvn -B org.owasp:dependency-check-maven:check
           -DnvdApiKey="${NVD_API_KEY}"
