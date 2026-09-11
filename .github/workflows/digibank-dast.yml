@@ -62,7 +62,9 @@ jobs:
           cache: maven
 
       - name: Build DigiBank
-        run: mvn -B clean verify -DskipTests
+        # install (not just verify) so the sibling module jars/POMs are available in the local Maven
+        # repository when the later `spring-boot:run -pl digibank-web` resolves its module dependencies.
+        run: mvn -B clean install -DskipTests
 
       - name: Start DigiBank
         run: |
@@ -75,11 +77,17 @@ jobs:
               echo "Application is up"
               exit 0
             fi
+            # Fail fast if the background spring-boot process has already exited.
+            if ! pgrep -f "spring-boot:run|DigiBankApplication" > /dev/null; then
+              echo "DigiBank process exited before becoming healthy"
+              tail -120 digibank.log
+              exit 1
+            fi
             echo "Waiting for DigiBank (${attempt}/40)"
             sleep 5
           done
           echo "Application did not start in time"
-          tail -100 digibank.log
+          tail -120 digibank.log
           exit 1
 
       - name: Set up Node.js
