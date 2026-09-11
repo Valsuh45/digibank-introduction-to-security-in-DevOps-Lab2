@@ -52,6 +52,30 @@ GitHub Actions runs:
 
 These checks make the security evidence reproducible outside a local developer machine.
 
+## Workshop 2 SAST Commands
+
+The Workshop 2 analysis chain is configured in the parent POM. The normal build remains independent
+of external scanner services; run the analysis explicitly from the repository root:
+
+```bash
+mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
+mvn -B clean install -DskipTests
+mvn -B org.pitest:pitest-maven:mutationCoverage
+mvn -B clean verify sonar:sonar \
+  -Dsonar.projectKey=digibank-parent \
+  -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
+  -Dsonar.token="$SONAR_TOKEN"
+```
+
+Dependency-Check produces `target/dependency-check-report.html`; PITest produces reports under
+`target/pit-reports`. SonarQube requires a running local/server instance and a token supplied through
+the environment. Tokens and NVD credentials must never be committed to Maven files, YAML files, or
+the repository.
+
+The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
+artifacts. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a
+developer machine is not reachable from a hosted runner.
+
 ## Automated Dependency Updates
 
 Dependabot checks Maven dependencies and GitHub Actions every Monday. Minor and patch updates are

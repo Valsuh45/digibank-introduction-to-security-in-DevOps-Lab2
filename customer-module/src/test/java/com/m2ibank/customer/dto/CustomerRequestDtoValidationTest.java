@@ -52,4 +52,15 @@ class CustomerRequestDtoValidationTest {
         assertThat(violations).extracting(violation -> violation.getPropertyPath().toString())
                 .contains("firstName", "lastName", "email", "identityNumber");
     }
+
+    @Test
+    void rejectsMalformedNamesAndIdentityNumbers() {
+        CustomerRequestDto request = new CustomerRequestDto(
+                "J4ne", "D@e", "jane@example.com", "ID/123");
+
+        Set<ConstraintViolation<CustomerRequestDto>> violations = validator.validate(request);
+
+        assertThat(violations).extracting(violation -> violation.getPropertyPath().toString())
+                .contains("firstName", "lastName", "identityNumber");
+    }
 }
