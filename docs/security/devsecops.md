@@ -75,11 +75,7 @@ the environment. Tokens and NVD credentials must never be committed to Maven fil
 the repository.
 
 The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
-artifacts. The Dependency-Check step is configured with `continue-on-error: true` to allow documented
-Spring Framework/Boot CVEs (suppressed by version/package in `dependency-check-suppressions.xml`,
-expiring 2026-12-31) to pass the workflow while remaining visible in reports; unsuppressed findings
-and NVD/scanner errors still fail the job. Local SonarQube is intentionally not run in GitHub Actions
-because `localhost` on a developer machine is not reachable from a hosted runner.
+The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a developer machine is not reachable from a hosted runner.
 
 ## Automated Dependency Updates
 
