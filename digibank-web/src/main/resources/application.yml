@@ -64,3 +64,16 @@ springdoc:
 logging:
   level:
     com.m2ibank: INFO
+
+---
+# Production profile: disable interactive API documentation so the attack surface is reduced.
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

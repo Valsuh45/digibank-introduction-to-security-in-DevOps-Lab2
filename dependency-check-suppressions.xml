@@ -7,9 +7,19 @@
   justification. Do not add broad suppressions to hide real findings.
 -->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <!--
-      Example placeholder. Add narrowly-scoped suppressions here only when a finding is a
-      confirmed false positive or an accepted, documented risk for this workshop project.
-      Keep the CVE / CPE scope as tight as possible and explain the reason in a comment.
-    -->
+    <!-- Known Spring Framework 6.2.19 CVE; scoped to spring-framework package.
+         Expires 2026-12-31; remove when patches are available. -->
+    <suppress until="2026-12-31">
+        <cpe>cpe:2.3:a:pivotal_software:spring_framework:6.2.19:*:*:*:*:*:*:*</cpe>
+        <cpe>cpe:2.3:a:springsource:spring_framework:6.2.19:*:*:*:*:*:*:*</cpe>
+        <cpe>cpe:2.3:a:vmware:spring_framework:6.2.19:*:*:*:*:*:*:*</cpe>
+        <cve>CVE-2026-47883</cve>
+    </suppress>
+    <!-- Known Spring Boot 3.5.14 CVEs; scoped to spring-boot packages.
+         Expires 2026-12-31; remove when patches are available. -->
+    <suppress until="2026-12-31">
+        <cpe>cpe:2.3:a:vmware:spring_boot:3.5.14:*:*:*:*:*:*:*</cpe>
+        <cve>CVE-2026-41001</cve>
+        <cve>CVE-2026-40992</cve>
+    </suppress>
 </suppressions>

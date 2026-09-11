@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.containsString;
@@ -45,7 +47,20 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(get("/test/not-found"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Customer not found"));
+                .andExpect(jsonPath("$.message").value("Resource not found"));
+    }
+
+    @Test
+    void resourceNotFoundDoesNotEchoInternalIdentifier() throws Exception {
+        mockMvc.perform(get("/test/not-found"))
+                .andExpect(content().string(not(containsString("99999"))));
+    }
+
+    @Test
+    void unknownResourceReturns404RatherThanA500() throws Exception {
+        mockMvc.perform(get("/test/no-resource"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Resource not found"));
     }
 
     @Test
@@ -53,7 +68,13 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(get("/test/business"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.message").value("Transfer rejected"));
+                .andExpect(jsonPath("$.message").value("Request could not be processed"));
+    }
+
+    @Test
+    void businessFailureDoesNotDiscloseInternalReason() throws Exception {
+        mockMvc.perform(get("/test/business"))
+                .andExpect(content().string(not(containsString("Transfer rejected"))));
     }
 
     @Test
@@ -82,6 +103,11 @@ class GlobalExceptionHandlerTest {
         @GetMapping("/test/not-found")
         void notFound() {
             throw new ResourceNotFoundException("Customer not found");
+        }
+
+        @GetMapping("/test/no-resource")
+        void noResource() throws NoResourceFoundException {
+            throw new NoResourceFoundException(HttpMethod.GET, "/api/v1/does-not-exist");
         }
 
         @GetMapping("/test/business")

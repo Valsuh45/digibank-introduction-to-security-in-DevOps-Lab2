@@ -1,0 +1,769 @@
+{
+  "info": {
+    "name": "DigiBank-DAST-Validation",
+    "description": "Final DAST validation collection for DigiBank (Workshop 3). It replays functional regression, input-validation, error-handling, information-exposure, and remediation checks against a running DigiBank instance. All URLs use the {{baseUrl}} environment variable so the same collection runs locally and in CI with Newman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01-functional-regression-check",
+      "item": [
+        {
+          "name": "Create customer - valid payload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Response has an id and does not expose identityNumber', function () {",
+                  "    pm.expect(body.data).to.have.property('id');",
+                  "    pm.expect(body.data).to.not.have.property('identityNumber');",
+                  "});",
+                  "if (body && body.data && body.data.id) {",
+                  "    pm.collectionVariables.set('customerId', body.data.id);",
+                  "    pm.environment.set('customerId', body.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Jean\",\n    \"lastName\": \"Testeur\",\n    \"email\": \"jean.testeur@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "Create customer 2 - valid payload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "if (body && body.data && body.data.id) {",
+                  "    pm.collectionVariables.set('customer2Id', body.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Claire\",\n    \"lastName\": \"Benef\",\n    \"email\": \"claire.benef@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9002\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "List customers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Customer list is returned without identityNumber', function () {",
+                  "    pm.expect(body.data).to.be.an('array');",
+                  "    if (body.data.length > 0) {",
+                  "        pm.expect(body.data[0]).to.not.have.property('identityNumber');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "Create source account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "if (body && body.data && body.data.accountNumber) {",
+                  "    pm.collectionVariables.set('sourceAccountNumber', body.data.accountNumber);",
+                  "    pm.environment.set('sourceAccountNumber', body.data.accountNumber);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"customerId\": {{customerId}},\n    \"accountType\": \"CURRENT\",\n    \"initialBalance\": 100000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts"]
+            }
+          }
+        },
+        {
+          "name": "Create target account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "if (body && body.data && body.data.accountNumber) {",
+                  "    pm.collectionVariables.set('targetAccountNumber', body.data.accountNumber);",
+                  "    pm.environment.set('targetAccountNumber', body.data.accountNumber);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"customerId\": {{customerId}},\n    \"accountType\": \"SAVINGS\",\n    \"initialBalance\": 50000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts"]
+            }
+          }
+        },
+        {
+          "name": "Execute transfer - valid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Transfer response has an id', function () {",
+                  "    pm.expect(body.data).to.have.property('id');",
+                  "});",
+                  "if (body && body.data && body.data.id) {",
+                  "    pm.collectionVariables.set('transferId', body.data.id);",
+                  "    pm.environment.set('transferId', body.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{targetAccountNumber}}\",\n    \"amount\": 2500.00,\n    \"description\": \"DAST functional regression transfer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        },
+        {
+          "name": "Get transfer by id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Returned transfer id matches created transfer', function () {",
+                  "    pm.expect(String(body.data.id)).to.eql(String(pm.collectionVariables.get('transferId')));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers/{{transferId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers", "{{transferId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get account transaction history",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Transaction history is an array', function () {",
+                  "    pm.expect(body.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers", "account", "{{sourceAccountNumber}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02-input-validation-check",
+      "item": [
+        {
+          "name": "Create customer - invalid email rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Response is a controlled validation error', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.success).to.eql(false);",
+                  "    pm.expect(body.message).to.eql('Validation failed');",
+                  "});",
+                  "pm.test('No technical trace is disclosed', function () {",
+                  "    const text = pm.response.text().toLowerCase();",
+                  "    pm.expect(text).to.not.include('exception');",
+                  "    pm.expect(text).to.not.include('stacktrace');",
+                  "    pm.expect(text).to.not.include('org.springframework');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Invalid\",\n    \"lastName\": \"Client\",\n    \"email\": \"invalid email\",\n    \"identityNumber\": \"DB-CUST-9003\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "Create customer - blank name rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Validation message is generic', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.eql('Validation failed');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"\",\n    \"lastName\": \"Client\",\n    \"email\": \"blank.name@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9004\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "Create customer - malformed identity number rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Identity format validation applies', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.success).to.eql(false);",
+                  "    if (body.data && body.data.identityNumber) {",
+                  "        pm.expect(body.data.identityNumber).to.include('Identity number');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Bad\",\n    \"lastName\": \"Identity\",\n    \"email\": \"bad.identity@digibank.test\",\n    \"identityNumber\": \"???\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "Create account - negative balance rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Negative balance is rejected at the boundary', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.be.oneOf(['Request could not be processed', 'Validation failed']);",
+                  "});",
+                  "pm.test('No technical trace is disclosed', function () {",
+                  "    const text = pm.response.text().toLowerCase();",
+                  "    pm.expect(text).to.not.include('exception');",
+                  "    pm.expect(text).to.not.include('org.springframework');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"customerId\": {{customerId}},\n    \"accountType\": \"CURRENT\",\n    \"initialBalance\": -5000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts"]
+            }
+          }
+        },
+        {
+          "name": "Transfer - zero amount rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Zero amount is rejected with a controlled message', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.be.oneOf(['Request could not be processed', 'Validation failed']);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{targetAccountNumber}}\",\n    \"amount\": 0,\n    \"description\": \"zero amount\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        },
+        {
+          "name": "Transfer - negative amount rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Negative amount is rejected', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.be.oneOf(['Request could not be processed', 'Validation failed']);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{targetAccountNumber}}\",\n    \"amount\": -100,\n    \"description\": \"negative amount\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03-error-handling-check",
+      "item": [
+        {
+          "name": "Get customer - nonexistent id does not reveal the id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Error message is generic and does not echo the id', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.eql('Resource not found');",
+                  "    pm.expect(pm.response.text()).to.not.include('99999');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "99999"]
+            }
+          }
+        },
+        {
+          "name": "Get account - nonexistent id does not reveal the id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Error message is generic', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.eql('Resource not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts", "99999"]
+            }
+          }
+        },
+        {
+          "name": "Create customer - duplicate email does not reveal existence",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Duplicate rejection message is generic', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.eql('Request could not be processed');",
+                  "    pm.expect(pm.response.text()).to.not.include('already exists');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Jean\",\n    \"lastName\": \"Testeur\",\n    \"email\": \"jean.testeur@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9001\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "Transfer - same source and target rejected without revealing reason",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Same-account transfer rejected with a generic message', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.eql('Request could not be processed');",
+                  "    pm.expect(pm.response.text()).to.not.include('must be different');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"amount\": 100,\n    \"description\": \"same account\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        },
+        {
+          "name": "Transfer - insufficient balance rejected without revealing balance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Insufficient balance rejected with a generic message', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.eql('Request could not be processed');",
+                  "    pm.expect(pm.response.text()).to.not.include('insufficient');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{targetAccountNumber}}\",\n    \"amount\": 999999999,\n    \"description\": \"insufficient balance\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04-information-exposure-check",
+      "item": [
+        {
+          "name": "Error response discloses no stack trace or framework internals",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Response contains no stack trace or framework internals', function () {",
+                  "    const text = pm.response.text().toLowerCase();",
+                  "    pm.expect(text).to.not.include('exception');",
+                  "    pm.expect(text).to.not.include('stacktrace');",
+                  "    pm.expect(text).to.not.include('org.springframework');",
+                  "    pm.expect(text).to.not.include('hibernate');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Probe\",\n    \"lastName\": \"Exposure\",\n    \"email\": \"probe.exposure@digibank.test\",\n    \"identityNumber\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05-remediation-verification",
+      "item": [
+        {
+          "name": "Customer response omits sensitive identityNumber",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Identity number is not exposed in customer profile', function () {",
+                  "    pm.expect(body.data).to.not.have.property('identityNumber');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "customers", "{{customerId}}"]
+            }
+          }
+        },
+        {
+          "name": "Swagger UI disabled outside development (ci/profile)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('API docs are not exposed when running in ci profile', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('message');",
+                  "    const text = pm.response.text().toLowerCase();",
+                  "    pm.expect(text).to.not.include('swagger');",
+                  "    pm.expect(text).to.not.include('openapi');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api-docs"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

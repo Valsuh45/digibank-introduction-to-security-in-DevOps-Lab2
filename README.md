@@ -106,6 +106,8 @@ The repository now includes:
 - [x] OWASP Dependency-Check for known vulnerabilities in Maven dependencies (CVSS >= 7 gate)
 - [x] Container hardening: multi-stage Dockerfile, non-root runtime user, `.dockerignore`
 - [x] Container and dependency security pipeline (Dependency-Check + Docker build + Trivy image scan + artifact publishing)
+- [x] SAST gates with PMD and SpotBugs / Find Security Bugs
+- [x] DAST (Workshop 3): generic error handling, input-validation hardening, profile-gated API docs, a Newman-ready Postman validation collection, and a DAST CI pipeline (Newman + OWASP ZAP)
 
 ## Prerequisites
 
@@ -174,3 +176,4 @@ For a deeper explanation of the current implementation, start with:
 - `docs/modules/overview.md`
 - `docs/security/devsecops.md`
 - `docs/operations/local-development.md`
+# Updated

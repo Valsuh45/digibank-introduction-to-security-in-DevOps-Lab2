@@ -15,6 +15,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -27,19 +28,33 @@ import java.util.Map;
  * unexpected errors into consistent {@link ApiResponse} JSON payloads. Centralizing this logic keeps
  * controllers small and makes the API behavior predictable.</p>
  *
- * <p>Security matters here: known business errors return clear client-facing messages, but unexpected
- * failures are logged server-side and returned as a generic message. That prevents stack traces,
- * database errors, and implementation details from leaking to callers.</p>
+ * <p>Security matters here: the client-facing message never echoes the internal exception message.
+ * Known business and not-found errors return a concise generic message (so callers cannot infer the
+ * existence of resources, enumerate identifiers, or learn business state), while the real reason is
+ * logged server-side. Unexpected failures are also logged and returned as a generic message. That
+ * prevents stack traces, database errors, resource identifiers, and implementation details from
+ * leaking to callers.</p>
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    private static final String NOT_FOUND_MESSAGE = "Resource not found";
+    private static final String BUSINESS_FAILURE_MESSAGE = "Request could not be processed";
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException exception) {
+        LOGGER.warn("Resource not found: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(exception.getMessage()));
+                .body(ApiResponse.error(NOT_FOUND_MESSAGE));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFound(NoResourceFoundException exception) {
+        LOGGER.warn("No resource found for path: {}", exception.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(NOT_FOUND_MESSAGE));
     }
 
     @ExceptionHandler({
@@ -48,12 +63,14 @@ public class GlobalExceptionHandler {
             InvalidOperationException.class
     })
     public ResponseEntity<ApiResponse<Void>> handleBusinessFailure(DigiBankException exception) {
-        return ResponseEntity.badRequest().body(ApiResponse.error(exception.getMessage()));
+        LOGGER.warn("Business failure: {}", exception.getMessage());
+        return ResponseEntity.badRequest().body(ApiResponse.error(BUSINESS_FAILURE_MESSAGE));
     }
 
     @ExceptionHandler(DigiBankException.class)
     public ResponseEntity<ApiResponse<Void>> handleDomainFailure(DigiBankException exception) {
-        return ResponseEntity.badRequest().body(ApiResponse.error(exception.getMessage()));
+        LOGGER.warn("Domain failure: {}", exception.getMessage());
+        return ResponseEntity.badRequest().body(ApiResponse.error(BUSINESS_FAILURE_MESSAGE));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
