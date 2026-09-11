@@ -6,7 +6,7 @@ Workshop 2 applies static application security testing (SAST) to the Workshop 1 
 
 The security objective is to detect, interpret, prioritize, remediate, and verify weaknesses without replacing the application or breaking its functional behavior.
 
-## Part 2: Analysis environment
+## Part 2: Analysis environment 
 
 The parent POM centralizes the Workshop 2 analysis tools:
 
