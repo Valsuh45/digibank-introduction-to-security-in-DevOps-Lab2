@@ -63,4 +63,15 @@ class CustomerRequestDtoValidationTest {
         assertThat(violations).extracting(violation -> violation.getPropertyPath().toString())
                 .contains("firstName", "lastName", "identityNumber");
     }
+
+    @Test
+    void rejectsNamesThatBecomeTooShortAfterTrimming() {
+        CustomerRequestDto request = new CustomerRequestDto(
+                "J ", "D ", "jane@example.com", "ID-12345");
+
+        Set<ConstraintViolation<CustomerRequestDto>> violations = validator.validate(request);
+
+        assertThat(violations).extracting(violation -> violation.getPropertyPath().toString())
+                .contains("firstName", "lastName");
+    }
 }

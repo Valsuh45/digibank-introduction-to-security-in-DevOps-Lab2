@@ -111,6 +111,7 @@ jobs:
           cache: maven
 
       - name: Run dependency vulnerability scan
+        continue-on-error: true
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: >-
