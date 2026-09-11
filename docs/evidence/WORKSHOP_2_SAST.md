@@ -84,9 +84,6 @@ the Spring patch when an upstream Spring Framework release containing the fixes 
 
 Until that upstream patch is available, the GitHub Actions Dependency-Check job uses a scoped
 allowlist (`dependency-check-suppressions.xml`) to permit only known Spring Framework and Spring Boot CVEs
-to pass the gate, while new findings, NVD update errors, and scanner failures remain blocking. The
-`continue-on-error: true` setting on the scan step allows only the documented Spring CVEs (by version
-and package CPE) to pass the workflow; the suppressions are scoped to specific coordinates so unrelated
-packages with the same CVE IDs are not hidden. The job should become
-blocking again after the dependency findings are remediated or an explicitly approved, time-bounded
-suppression is introduced.
+to pass the gate, while new findings, NVD update errors, and scanner failures remain blocking. The suppressions
+are scoped to specific coordinates so unrelated packages with the same CVE IDs are not hidden. The job remains
+blocking for all findings outside the documented, time-bounded suppressions.
