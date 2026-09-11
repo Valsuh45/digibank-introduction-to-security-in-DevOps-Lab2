@@ -58,10 +58,10 @@ The Workshop 2 analysis chain is configured in the parent POM. The normal build 
 of external scanner services; run the analysis explicitly from the repository root:
 
 ```bash
-mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
 mvn -B clean install -DskipTests
+mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
 mvn -B org.pitest:pitest-maven:mutationCoverage
-mvn -B clean verify sonar:sonar \
+mvn -B verify sonar:sonar \
   -Dsonar.projectKey=digibank-parent \
   -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
   -Dsonar.token="$SONAR_TOKEN"

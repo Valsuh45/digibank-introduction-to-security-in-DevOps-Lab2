@@ -56,10 +56,10 @@ mvn -B clean verify
 Run Workshop 2 analysis checks explicitly:
 
 ```bash
-mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
 mvn -B clean install -DskipTests
+mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
 mvn -B org.pitest:pitest-maven:mutationCoverage
-mvn -B clean verify sonar:sonar \
+mvn -B verify sonar:sonar \
   -Dsonar.projectKey=digibank-parent \
   -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
   -Dsonar.token="$SONAR_TOKEN"

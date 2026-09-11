@@ -146,7 +146,6 @@
                     <skipProvidedScope>true</skipProvidedScope>
                     <skipTestScope>true</skipTestScope>
                     <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
-                    <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppressions.xml</suppressionFile>
                 </configuration>
             </plugin>
             <plugin>
