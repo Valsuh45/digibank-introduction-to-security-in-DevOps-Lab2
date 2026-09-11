@@ -20,13 +20,13 @@ import jakarta.validation.constraints.Size;
 public record CustomerRequestDto(
         @NotBlank(message = "First name is required")
         @Size(min = 2, max = 100, message = "First name must contain between 2 and 100 characters")
-        @Pattern(regexp = "^[\\p{L}](?:[\\p{L} .'-]*\\p{L})$", message = "First name contains invalid characters")
+        @Pattern(regexp = "^[\\p{L}](?:[\\p{L}]|[ .'-][\\p{L}])*$", message = "First name contains invalid characters")
         @Schema(description = "Customer's legal first name.", example = "Amina", maxLength = 100)
         String firstName,
 
         @NotBlank(message = "Last name is required")
         @Size(min = 2, max = 100, message = "Last name must contain between 2 and 100 characters")
-        @Pattern(regexp = "^[\\p{L}](?:[\\p{L} .'-]*\\p{L})$", message = "Last name contains invalid characters")
+        @Pattern(regexp = "^[\\p{L}](?:[\\p{L}]|[ .'-][\\p{L}])*$", message = "Last name contains invalid characters")
         @Schema(description = "Customer's legal last name.", example = "Ndi", maxLength = 100)
         String lastName,
 

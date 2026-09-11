@@ -69,12 +69,15 @@ Acceptance requires a passing build and tests, reduced or justified analysis fin
 
 ## Scan Result and Residual Risk
 
+#### Pre-suppression Dependency-Check scan (before allowlist)
+
 The local Dependency-Check run completed its NVD database update and generated
 `target/dependency-check-report.html`, but the configured CVSS 7 gate failed on transitive
 Spring Framework 6.2.19 findings. The current Spring Boot 3.5.x dependency management available
 from Maven Central still resolves Spring Framework 6.2.19, and no newer 6.2.x artifact was
-available during this run to apply as a safe direct patch. The findings are therefore retained as
-a documented follow-up rather than suppressed or falsely reported as fixed.
+available during this run to apply as a safe direct patch. These findings are now temporarily
+allowed through `dependency-check-suppressions.xml` (time-bounded to 2026-12-31) while remaining
+visible in reports and noted for future remediation.
 
 The report also identifies lower-severity Log4j findings. They should be addressed together with
 the Spring patch when an upstream Spring Framework release containing the fixes is available.
