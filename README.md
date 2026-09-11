@@ -103,6 +103,8 @@ The repository now includes:
 - [x] Docker and Docker Compose support
 - [x] GitHub Actions CI with Maven verification, filesystem scanning, container scanning, and Compose smoke testing
 - [x] Weekly Dependabot monitoring for Maven and GitHub Actions dependencies
+- [x] SAST gates with PMD and SpotBugs / Find Security Bugs
+- [x] DAST (Workshop 3): generic error handling, input-validation hardening, profile-gated API docs, a Newman-ready Postman validation collection, and a DAST CI pipeline (Newman + OWASP ZAP)
 
 ## Prerequisites
 

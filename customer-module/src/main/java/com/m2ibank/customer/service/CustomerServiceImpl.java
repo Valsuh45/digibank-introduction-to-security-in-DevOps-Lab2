@@ -41,11 +41,9 @@ public class CustomerServiceImpl implements CustomerService {
         String email = normalizeEmail(request.email());
         String identityNumber = request.identityNumber().trim();
 
-        if (customerRepository.findByEmail(email).isPresent()) {
-            throw new BusinessException("A customer with this email already exists");
-        }
-        if (customerRepository.findByIdentityNumber(identityNumber).isPresent()) {
-            throw new BusinessException("A customer with this identity number already exists");
+        if (customerRepository.findByEmail(email).isPresent()
+                || customerRepository.findByIdentityNumber(identityNumber).isPresent()) {
+            throw new BusinessException("A customer with the supplied details already exists");
         }
 
         Customer customer = Customer.builder()
@@ -69,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDto getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .map(this::toResponse)
-            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     }
 
     @Override

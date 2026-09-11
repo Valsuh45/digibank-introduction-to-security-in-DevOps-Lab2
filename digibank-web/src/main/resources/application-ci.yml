@@ -1,0 +1,30 @@
+# CI pipeline profile for DigiBank.
+#
+# Used by the DAST GitHub Actions workflow. The database connection comes from environment variables
+# (no committed secrets) and interactive API documentation is disabled so the pipeline observes the
+# reduced exposure surface expected outside local development.
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+  error:
+    include-exception: false
+    include-message: never
+    include-stacktrace: never
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
