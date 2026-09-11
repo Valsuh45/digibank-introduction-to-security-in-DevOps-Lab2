@@ -25,6 +25,27 @@ Current gates:
 - Filesystem security scan.
 - Container security scan.
 - Docker Compose smoke test.
+- Container and dependency security pipeline (OWASP Dependency-Check + Docker build + Trivy image scan + artifact publishing).
+
+## Dependency and Container Security Pipeline
+
+`.github/workflows/digibank-security-pipeline.yml` industrializes the Workshop 4 controls. It:
+
+1. rebuilds and tests DigiBank (`mvn clean verify`);
+2. exports the Maven dependency tree;
+3. runs OWASP Dependency-Check on the dependencies (fails on CVSS >= 7);
+4. builds the Docker image;
+5. scans the image with Trivy (HIGH/CRITICAL, fails on findings);
+6. publishes the dependency-check report, dependency tree, and image metadata as artifacts.
+
+The `NVD_API_KEY` is injected from GitHub repository secrets and is never committed.
+
+## Local Verification
+
+The Workshop 4 local verification sequence is captured in
+`container-security/scripts/verify-workshop4.sh`. It runs the Maven build, exports the
+dependency tree, runs OWASP Dependency-Check, builds the image, exports image metadata, and
+scans the image with Trivy.
 
 ## Next Deployment Work
 

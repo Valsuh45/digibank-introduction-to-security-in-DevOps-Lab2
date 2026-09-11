@@ -16,6 +16,14 @@ spring:
   flyway:
     clean-disabled: true
 
+# The test profile re-enables OpenAPI so the documentation contract tests
+# (OpenApiDocumentationTest) can verify the generated /v3/api-docs document.
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 logging:
   level:
     com.m2ibank: WARN

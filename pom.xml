@@ -48,6 +48,8 @@
         <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
+        <dependency-check.version>10.0.4</dependency-check.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     </properties>
 
     <modules>
@@ -169,6 +171,36 @@
                             <version>${findsecbugs-plugin.version}</version>
                         </plugin>
                     </plugins>
+                </configuration>
+            </plugin>
+            <!-- OWASP Dependency-Check: identifies known vulnerabilities in direct and transitive
+                 Maven dependencies. Like SpotBugs and PMD, it is NOT bound to the default verify
+                 lifecycle so a normal `mvn clean verify` stays fast and does not require network
+                 access to the NVD. It runs explicitly via `mvn org.owasp:dependency-check-maven:check`
+                 (locally and in the dedicated CI job) and fails the build on CVSS >= 7. -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${dependency-check.version}</version>
+                <configuration>
+                    <format>HTML</format>
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
+                    <skipProvidedScope>true</skipProvidedScope>
+                    <skipTestScope>true</skipTestScope>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                    <suppressionFiles>
+                        <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
+                </configuration>
+            </plugin>
+            <!-- Surefire: stabilize test execution between local runs and GitHub Actions. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
         </plugins>

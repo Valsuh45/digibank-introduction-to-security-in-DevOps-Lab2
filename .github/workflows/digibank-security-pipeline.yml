@@ -1,0 +1,96 @@
+# DigiBank Container & Dependency Security Pipeline (Workshop 4)
+#
+# This workflow industrializes the container and dependency security controls from Workshop 4.
+# It rebuilds DigiBank, runs OWASP Dependency-Check on the Maven dependencies, builds the Docker
+# image, scans the image with Trivy, and publishes the resulting reports and metadata as artifacts
+# so the checks are reproducible, traceable, and comparable over time.
+#
+# The NVD API key is injected from GitHub repository secrets and is never committed to the repo.
+#
+name: DigiBank Container and Dependency Security Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: digibank-container-security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-validation:
+    name: Dependency and container security validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Build and test DigiBank
+        run: mvn -B clean verify
+
+      - name: Export dependency tree
+        run: mvn -B dependency:tree > dependency-tree.txt
+
+      - name: Run OWASP Dependency-Check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn -B org.owasp:dependency-check-maven:check
+
+      - name: Build Docker image
+        run: docker build -t digibank:ci .
+
+      - name: Export Docker image metadata
+        run: |
+          docker image inspect digibank:ci > docker-image-inspect.json
+          docker history digibank:ci --no-trunc > docker-image-history.txt
+
+      - name: Run Trivy on Docker image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: digibank:ci
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
+          hide-progress: true
+
+      - name: Upload Dependency-Check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: target/dependency-check-report.html
+          if-no-files-found: warn
+
+      - name: Upload dependency tree
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-tree
+          path: dependency-tree.txt
+          if-no-files-found: warn
+
+      - name: Upload Docker image metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image-metadata
+          path: |
+            docker-image-inspect.json
+            docker-image-history.txt
+          if-no-files-found: warn
