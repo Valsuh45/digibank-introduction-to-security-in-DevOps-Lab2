@@ -129,14 +129,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: dast-newman
 
+    env:
+      POSTGRES_PASSWORD: ci-${{ github.run_id }}-${{ github.run_attempt }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Start application stack
-        run: |
-          export POSTGRES_PASSWORD=ci-${{ github.run_id }}-${{ github.run_attempt }}
-          docker compose up --build -d
+        run: docker compose up --build -d
 
       - name: Wait for application
         run: |
@@ -156,12 +157,17 @@ jobs:
         continue-on-error: true
         run: |
           mkdir -p dast/reports
+          # The ZAP container runs as the 'zap' user (uid 1000), so the mounted reports directory must
+          # be writable by it, otherwise report generation fails with a permission error.
+          chmod 777 dast/reports
+          # Relative report paths are resolved inside the container's /zap/wrk working directory,
+          # which is the same directory as the host-mounted dast/reports.
           docker run --rm --network host \
             -v "${{ github.workspace }}/dast/reports:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py -t http://127.0.0.1:8080 \
-              -r /zap/wrk/zap-report.html \
-              -J /zap/wrk/zap-report.json \
+              -r zap-report.html \
+              -J zap-report.json \
               -m 5 -j
 
       - name: Upload ZAP reports
