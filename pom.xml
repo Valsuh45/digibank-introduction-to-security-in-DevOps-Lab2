@@ -147,6 +147,8 @@
                     <skipTestScope>true</skipTestScope>
                     <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                     <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppressions.xml</suppressionFile>
+                    <!-- Use centralized NVD data directory for caching across runs -->
+                    <dataDirectory>${java.io.tmpdir}/dependency-check-data</dataDirectory>
                 </configuration>
             </plugin>
             <plugin>
