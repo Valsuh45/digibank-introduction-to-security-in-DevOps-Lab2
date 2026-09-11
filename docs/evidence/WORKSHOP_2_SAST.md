@@ -83,9 +83,10 @@ The report also identifies lower-severity Log4j findings. They should be address
 the Spring patch when an upstream Spring Framework release containing the fixes is available.
 
 Until that upstream patch is available, the GitHub Actions Dependency-Check job uses a scoped
-allowlist (`dependency-check-suppressions.xml`) to permit only known Spring CVEs to pass the gate,
-while new findings, NVD update errors, and scanner failures remain blocking. The step-level
-`continue-on-error: true` is scoped to the scan step only; a validation step ensures the report was
-generated. The job should become
+allowlist (`dependency-check-suppressions.xml`) to permit only known Spring Framework and Spring Boot CVEs
+to pass the gate, while new findings, NVD update errors, and scanner failures remain blocking. The
+`continue-on-error: true` setting on the scan step allows only the documented Spring CVEs (by version
+and package CPE) to pass the workflow; the suppressions are scoped to specific coordinates so unrelated
+packages with the same CVE IDs are not hidden. The job should become
 blocking again after the dependency findings are remediated or an explicitly approved, time-bounded
 suppression is introduced.

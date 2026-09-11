@@ -46,6 +46,8 @@ GitHub Actions runs:
 - PMD aggregate Java quality gate (priority 1–3, zero allowed violations).
 - SpotBugs static analysis with the Find Security Bugs plugin (Java bug patterns plus security-sensitive
   code patterns such as injection, weak cryptography, and unsafe reflection/deserialization).
+- OWASP Dependency-Check vulnerability scan (blocks on CVSS ≥ 7, except for known Spring CVEs with time-bounded suppressions).
+- PITest mutation testing (validates test coverage of business logic).
 - Trivy filesystem scan for vulnerabilities, secrets, and misconfigurations.
 - Trivy container image scan.
 - Docker Compose smoke test against health, OpenAPI, and transfer workflow endpoints.
@@ -73,8 +75,11 @@ the environment. Tokens and NVD credentials must never be committed to Maven fil
 the repository.
 
 The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
-artifacts. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a
-developer machine is not reachable from a hosted runner.
+artifacts. The Dependency-Check step is configured with `continue-on-error: true` to allow documented
+Spring Framework/Boot CVEs (suppressed by version/package in `dependency-check-suppressions.xml`,
+expiring 2026-12-31) to pass the workflow while remaining visible in reports; unsuppressed findings
+and NVD/scanner errors still fail the job. Local SonarQube is intentionally not run in GitHub Actions
+because `localhost` on a developer machine is not reachable from a hosted runner.
 
 ## Automated Dependency Updates
 
