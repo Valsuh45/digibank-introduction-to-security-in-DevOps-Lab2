@@ -48,7 +48,7 @@ jobs:
 
       - name: Run OWASP Dependency-Check
         env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY || 'D721014C-022C-4878-A4BB-0843885ED9CF' }}
         run: mvn -B org.owasp:dependency-check-maven:check
 
       - name: Build Docker image
