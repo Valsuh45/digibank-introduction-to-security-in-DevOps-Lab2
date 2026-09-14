@@ -5,7 +5,7 @@
 # image, scans the image with Trivy, and publishes the resulting reports and metadata as artifacts
 # so the checks are reproducible, traceable, and comparable over time.
 #
-# The NVD API key is injected from GitHub repository secrets and is never committed to the repo.
+# The NVD API key is injected only from GitHub Secrets. Previously exposed keys must be revoked.
 #
 name: DigiBank Container and Dependency Security Pipeline
 

@@ -90,3 +90,16 @@ instead of `/v3/api-docs`, and missing Newman reports only warned. Both were cor
 collection now checks the real OpenAPI endpoint and both Swagger routes, and CI requires both
 nonempty report files. The reviewer rechecked the corrections and reported no remaining actionable
 defects within its reviewed scope. The corrected Newman run passes all 82 requests / 134 assertions.
+
+## Integration with latest main
+
+Main now includes Workshop 4. The integration retains the secret-only NVD configuration,
+aggregate dependency scan and failure enforcement from this branch. The additional Spring,
+Spring Boot and Log4j CVE exceptions from main are retained with Maven version selectors,
+not CPE suppression targets. Their presence is inherited risk acceptance, not proof that the
+findings are false positives: review every CVE against a current dependency inventory before
+release, record the affected artifact and justification, and remove unsupported exceptions.
+
+Earlier measurements in this document describe their recorded source, not this merge.
+NVD credential rotation/configuration and SonarQube configuration remain external tasks;
+new hosted CI results must be retained for the integrated revision.
