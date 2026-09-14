@@ -35,8 +35,13 @@ management:
       exposure:
         include: health
 
+# OpenAPI / Swagger UI is enabled by default for local development. Other profiles (prod, ci) turn it
+# off so the interactive documentation is only exposed where it is genuinely useful.
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
+    enabled: true
     path: /swagger-ui.html
 
 ---
@@ -50,3 +55,16 @@ spring:
 logging:
   level:
     com.m2ibank: INFO
+
+---
+# Production profile: disable interactive API documentation so the attack surface is reduced.
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

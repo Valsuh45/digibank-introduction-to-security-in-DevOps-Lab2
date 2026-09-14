@@ -71,7 +71,7 @@ class CustomerServiceImplTest {
 
         assertThatThrownBy(() -> customerService.createCustomer(request))
                 .isInstanceOf(BusinessException.class)
-                .hasMessage("A customer with this email already exists");
+                .hasMessage("A customer with the supplied details already exists");
     }
 
     @Test
@@ -83,7 +83,7 @@ class CustomerServiceImplTest {
 
         assertThatThrownBy(() -> customerService.createCustomer(request))
                 .isInstanceOf(BusinessException.class)
-                .hasMessage("A customer with this identity number already exists");
+                .hasMessage("A customer with the supplied details already exists");
     }
 
     @Test

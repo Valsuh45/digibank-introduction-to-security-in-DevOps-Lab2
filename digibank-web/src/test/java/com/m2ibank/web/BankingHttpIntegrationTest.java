@@ -85,7 +85,7 @@ class BankingHttpIntegrationTest {
         }
         mvc.perform(post("/api/v1/transfers").contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(transferBody(sourceNumber, targetNumber, "500.00"))))
-                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("Insufficient balance"));
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("Request could not be processed"));
         assertBalance(sourceNumber, "374.75");
         assertBalance(targetNumber, "225.25");
         assertThat(historySize(sourceNumber)).isEqualTo(1);
@@ -138,7 +138,7 @@ class BankingHttpIntegrationTest {
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(jsonPath("$.message").value("Unsupported Media Type"));
         mvc.perform(get("/api/v1/missing-route"))
-                .andExpect(status().isNotFound()).andExpect(jsonPath("$.message").value("Not Found"));
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.message").value("Resource not found"));
         mvc.perform(post("/api/v1/customers").contentType(MediaType.APPLICATION_JSON).content("{"))
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("Request body is invalid"));
     }

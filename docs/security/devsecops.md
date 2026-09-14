@@ -46,11 +46,36 @@ GitHub Actions runs:
 - PMD aggregate Java quality gate (priority 1–3, zero allowed violations).
 - SpotBugs static analysis with the Find Security Bugs plugin (Java bug patterns plus security-sensitive
   code patterns such as injection, weak cryptography, and unsafe reflection/deserialization).
+- OWASP Dependency-Check vulnerability scan (blocks on CVSS ≥ 7, except for known Spring CVEs with time-bounded suppressions).
+- PITest mutation testing (validates test coverage of business logic).
 - Trivy filesystem scan for vulnerabilities, secrets, and misconfigurations.
 - Trivy container image scan.
 - Docker Compose smoke test against health, OpenAPI, and transfer workflow endpoints.
 
 These checks make the security evidence reproducible outside a local developer machine.
+
+## Workshop 2 SAST Commands
+
+The Workshop 2 analysis chain is configured in the parent POM. The normal build remains independent
+of external scanner services; run the analysis explicitly from the repository root:
+
+```bash
+mvn -B clean install -DskipTests
+mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
+mvn -B org.pitest:pitest-maven:mutationCoverage
+mvn -B verify sonar:sonar \
+  -Dsonar.projectKey=digibank-parent \
+  -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
+  -Dsonar.token="$SONAR_TOKEN"
+```
+
+Dependency-Check produces `target/dependency-check-report.html`; PITest produces reports under
+`target/pit-reports`. SonarQube requires a running local/server instance and a token supplied through
+the environment. Tokens and NVD credentials must never be committed to Maven files, YAML files, or
+the repository.
+
+The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
+The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a developer machine is not reachable from a hosted runner.
 
 ## Automated Dependency Updates
 
@@ -131,3 +156,19 @@ CPD becomes a blocking gate. PMD is the only new gate in this change.
 The API currently accepts unauthenticated requests and does not enforce account ownership. Validation, transactions, and safe error responses are implemented controls, but they do not establish who may operate an account. Use fictional data in a local training environment. Swagger and Flyway demonstration data are part of this educational execution path; deployment-specific exposure and seed-data policies remain subsequent work.
 
 Workshop 1 evidence and any execution limitations are recorded in [the evidence index](../evidence/README.md). Existing static-analysis jobs extend the initial workshop foundation; their presence does not demonstrate completion of Workshops 2–4.
+
+## Dynamic Analysis (DAST)
+
+Workshop 3 adds runtime security analysis. The API error handler no longer echoes internal exception
+messages: not-found and business failures return generic text (`Resource not found`,
+`Request could not be processed`) while the real reason is logged server-side. This stops callers from
+enumerating identifiers or probing for the existence of data. Customer duplicate and not-found
+messages were made generic, and the identity number now has a structural `@Pattern` constraint.
+
+Interactive API documentation is enabled in the `dev` profile and disabled in the `prod` and `ci`
+profiles so the exposed surface is reduced outside local development.
+
+DAST artifacts (a Newman-ready Postman validation collection, an environment, and OWASP ZAP notes)
+live under `dast/`. A dedicated CI workflow (`.github/workflows/digibank-dast.yml`) replays the Newman
+collection as a blocking check and runs an OWASP ZAP baseline as an observation-level scan. See
+[`dast.md`](dast.md) for the full findings, remediations, and revalidation.

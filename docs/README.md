@@ -8,7 +8,7 @@ This folder contains the project documentation used by developers, reviewers, an
 - `api/`: summarizes the REST API and documentation endpoints.
 - `modules/`: explains each Maven module and its responsibility.
 - `operations/`: explains local development, Docker Compose, CI, and future deployment work.
-- `security/`: explains DevSecOps controls and security decisions.
+- `security/`: explains DevSecOps controls and security decisions (SAST and DAST).
 - `evidence/`: keeps workshop evidence and implementation notes.
 
 ## Reading Order
