@@ -122,16 +122,13 @@ public class BankAccountController {
     @GetMapping("/customer/{customerId}")
     @Operation(
             summary = "List customer accounts",
-            description = "Returns every account owned by one customer."
+            description = "Returns accounts matching a customer id, or an empty list when none exist."
     )
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Customer account list returned",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "Customer id was not found")
+                    description = "Customer account list returned; empty when no accounts match",
+                    content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     })
     public ResponseEntity<ApiResponse<List<AccountResponseDto>>> getCustomerAccounts(
             @Parameter(description = "Positive internal customer id.", example = "1")

@@ -1,0 +1,348 @@
+{
+  "startedAt": "2026-09-11T08:37:50.757184+00:00",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/swagger-ui/index.html",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/actuator/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/v3/api-docs",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customers",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/email/w1-1c1c3ba8c0fc4d5d-0%40example.com",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customers",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/accounts",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/number/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/customer/6",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customers",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/email/w1-1c1c3ba8c0fc4d5d-1%40example.com",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customers",
+      "status": 400
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/accounts",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/number/710111800465",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/customer/7",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/transfers",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/3",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/710111800465",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/transfers",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/710111800465",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/transfers",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/710111800465",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/transfers",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/710111800465",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/transfers",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/710111800465",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/transfers",
+      "status": 400
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/5",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/681523077596",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/6",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/transfers/account/710111800465",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/accounts",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/accounts/customer/9223372036854775807",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/not-a-number",
+      "status": 400
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/customers",
+      "status": 405
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customers",
+      "status": 415
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/does-not-exist",
+      "status": 404
+    }
+  ],
+  "passed": true,
+  "observations": {
+    "customers": [
+      {
+        "id": 6,
+        "firstName": "Workshop",
+        "lastName": "Verification",
+        "email": "w1-1c1c3ba8c0fc4d5d-0@example.com",
+        "status": "ACTIVE",
+        "createdAt": "2026-09-11T08:37:53.002768149Z"
+      },
+      {
+        "id": 7,
+        "firstName": "Workshop",
+        "lastName": "Verification",
+        "email": "w1-1c1c3ba8c0fc4d5d-1@example.com",
+        "status": "ACTIVE",
+        "createdAt": "2026-09-11T08:37:53.376797827Z"
+      }
+    ],
+    "accounts": [
+      {
+        "id": 5,
+        "accountNumber": "681523077596",
+        "balance": 100,
+        "currency": "XAF",
+        "accountType": "SAVINGS",
+        "status": "ACTIVE",
+        "createdAt": "2026-09-11T08:37:53.266058455Z",
+        "customerId": 6
+      },
+      {
+        "id": 6,
+        "accountNumber": "710111800465",
+        "balance": 25,
+        "currency": "XAF",
+        "accountType": "SAVINGS",
+        "status": "ACTIVE",
+        "createdAt": "2026-09-11T08:37:53.457627949Z",
+        "customerId": 7
+      }
+    ],
+    "transfer": {
+      "id": 3,
+      "transferReference": "TRF-2C720EFA-55FA-4911-A6F3-E727D1D4F0D8",
+      "sourceAccountNumber": "681523077596",
+      "targetAccountNumber": "710111800465",
+      "amount": "10.00",
+      "status": "SUCCESS",
+      "executionDate": "2026-09-11T08:37:53.557286Z",
+      "description": "Workshop 1 HTTP verification"
+    },
+    "balancesAfter": [
+      "90.00",
+      "35.00"
+    ],
+    "rejectedTransfersLeaveBalancesAndHistoryUnchanged": true
+  }
+}

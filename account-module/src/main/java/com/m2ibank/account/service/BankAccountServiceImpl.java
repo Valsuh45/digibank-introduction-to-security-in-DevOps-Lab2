@@ -2,11 +2,11 @@ package com.m2ibank.account.service;
 
 import com.m2ibank.account.dto.AccountRequestDto;
 import com.m2ibank.account.dto.AccountResponseDto;
-import com.m2ibank.account.entity.AccountType;
 import com.m2ibank.account.entity.BankAccount;
 import com.m2ibank.account.repository.BankAccountRepository;
 import com.m2ibank.common.exception.BusinessException;
 import com.m2ibank.common.exception.ResourceNotFoundException;
+import com.m2ibank.customer.service.CustomerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +20,8 @@ import java.util.List;
  * create the entity, save it, and map it back to a response DTO. Read methods use explicit not-found
  * exceptions so API callers receive clean errors.</p>
  *
- * <p>Write operations are transactional. The transfer module also uses {@link #updateBalance(String,
- * BigDecimal)} during a larger transfer transaction, so balance changes remain part of the calling
- * business operation.</p>
+ * <p>Write operations are transactional. Customer existence is checked through the customer service
+ * contract; the database foreign key remains the final integrity constraint.</p>
  */
 @Service
 @Transactional(readOnly = true)
@@ -33,19 +32,23 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository repository;
     private final AccountNumberGenerator accountNumberGenerator;
+    private final CustomerService customerService;
 
     public BankAccountServiceImpl(
             BankAccountRepository repository,
-            AccountNumberGenerator accountNumberGenerator
+            AccountNumberGenerator accountNumberGenerator,
+            CustomerService customerService
     ) {
         this.repository = repository;
         this.accountNumberGenerator = accountNumberGenerator;
+        this.customerService = customerService;
     }
 
     @Override
     @Transactional
     public AccountResponseDto createAccount(AccountRequestDto request) {
         validateRequest(request);
+        customerService.getCustomerById(request.customerId());
 
         BankAccount account = BankAccount.open(
                 nextAvailableAccountNumber(),
@@ -69,12 +72,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public AccountResponseDto findByAccountNumber(String accountNumber) {
-        if (accountNumber == null || !accountNumber.matches("[1-9][0-9]{11}")) {
-            throw new ResourceNotFoundException("Bank account not found");
-        }
-        return repository.findByAccountNumber(accountNumber)
-                .map(this::mapToResponse)
-                .orElseThrow(this::notFound);
+        return mapToResponse(findAccount(accountNumber));
     }
 
     @Override
@@ -103,10 +101,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     private BankAccount findAccount(String accountNumber) {
-        if (accountNumber == null || !accountNumber.matches("[1-9][0-9]{11}")) {
+        if (accountNumber == null || !accountNumber.trim().matches("[1-9][0-9]{11}")) {
             throw notFound();
         }
-        return repository.findByAccountNumber(accountNumber).orElseThrow(this::notFound);
+        return repository.findByAccountNumber(accountNumber.trim()).orElseThrow(this::notFound);
     }
 
     private String nextAvailableAccountNumber() {

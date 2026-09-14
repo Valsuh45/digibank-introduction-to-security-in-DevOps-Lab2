@@ -108,6 +108,9 @@ public class BankAccount {
         if (balance == null || balance.signum() < 0) {
             throw new BusinessException("Account balance must not be negative");
         }
+        if (balance.scale() > 2 || balance.precision() - balance.scale() > 17) {
+            throw new BusinessException("Account balance must have at most 17 integer digits and 2 decimal places");
+        }
         this.balance = balance;
     }
 

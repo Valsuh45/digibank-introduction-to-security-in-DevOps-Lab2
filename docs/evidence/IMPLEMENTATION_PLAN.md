@@ -8,7 +8,9 @@
 
 **Spec:** `docs/evidence/IMPLEMENTATION_DESIGN.md`
 
-## Constraints
+This is a historical implementation record. Its checkmarks are not fresh execution evidence for the current revision. See [the evidence index](README.md) for current verification and outstanding proof. The constraints below describe the original implementation task, not ongoing repository rules.
+
+## Original Task Constraints
 
 - Do not edit domain implementation files.
 - Do not commit a database password or fallback secret.

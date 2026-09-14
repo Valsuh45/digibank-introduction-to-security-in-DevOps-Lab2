@@ -14,3 +14,5 @@ This folder contains the project documentation used by developers, reviewers, an
 ## Reading Order
 
 Start with `architecture/overview.md`, then read `modules/overview.md`, then use `api/endpoints.md` and `security/devsecops.md` for review details.
+
+For Workshop 1 verification and PDF deliverables, use [the evidence index](evidence/README.md).

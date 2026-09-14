@@ -24,6 +24,10 @@
     <dependencies>
         <dependency>
             <groupId>com.m2ibank</groupId>
+            <artifactId>customer-module</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.m2ibank</groupId>
             <artifactId>common-module</artifactId>
         </dependency>
         <dependency>

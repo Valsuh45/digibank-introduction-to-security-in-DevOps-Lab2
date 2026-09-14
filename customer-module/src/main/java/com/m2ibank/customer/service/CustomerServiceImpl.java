@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDto getCustomerById(Long id) {
         return customerRepository.findById(id)
                 .map(this::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     }
 
     @Override

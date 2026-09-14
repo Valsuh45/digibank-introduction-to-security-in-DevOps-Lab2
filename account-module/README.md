@@ -11,7 +11,7 @@
 - Store account balances using `BigDecimal`.
 - Reject negative balances.
 - Retrieve accounts by id, account number, or customer id.
-- Provide controlled balance updates for transfer workflows.
+- Provide a controlled balance-update helper; transfers currently update the account repository within their own transaction.
 
 ## Important Files
 
@@ -32,5 +32,5 @@ Money uses `BigDecimal`, not floating-point types, to avoid rounding errors in b
 Run this module alone with:
 
 ```bash
-mvn -pl account-module test
+mvn -pl account-module -am test
 ```

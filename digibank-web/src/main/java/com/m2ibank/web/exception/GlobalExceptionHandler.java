@@ -9,6 +9,8 @@ import com.m2ibank.common.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -81,8 +83,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.error("Request body is invalid"));
     }
 
+    @ExceptionHandler(TypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(TypeMismatchException exception) {
+        return ResponseEntity.badRequest().body(ApiResponse.error("Request parameter is invalid"));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpectedFailure(Exception exception) {
+        // Spring MVC exceptions carry protocol status and headers (for example Allow for 405).
+        // Keep those semantics without returning exception details or rejected user input.
+        if (exception instanceof ErrorResponse error && error.getStatusCode().is4xxClientError()) {
+            HttpStatus status = HttpStatus.resolve(error.getStatusCode().value());
+            String message = status == null ? "Request is invalid" : status.getReasonPhrase();
+            return ResponseEntity.status(error.getStatusCode()).headers(error.getHeaders())
+                    .body(ApiResponse.error(message));
+        }
         LOGGER.error("Unhandled request failure", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("An unexpected error occurred"));

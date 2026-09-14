@@ -173,12 +173,15 @@ jobs:
         run: curl -fsS http://127.0.0.1:8080/v3/api-docs | grep -q '"title":"DigiBank API"'
 
       - name: Exercise transfer workflow
-        run: |
-          curl -fsS \
-            -H 'Content-Type: application/json' \
-            -d '{"sourceAccountNumber":"100000000001","targetAccountNumber":"100000000002","amount":25.00,"description":"CI smoke test"}' \
-            http://127.0.0.1:8080/api/v1/transfers \
-            | grep -q '"status":"SUCCESS"'
+        run: python3 scripts/verify-workshop1.py --base-url http://127.0.0.1:8080
+
+      - name: Upload HTTP verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workshop1-http
+          path: target/workshop1-http.json
+          if-no-files-found: warn
 
       - name: Stop application stack
         if: always()

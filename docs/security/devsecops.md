@@ -125,3 +125,9 @@ CI uploads these as the `pmd-reports` artifact even when the gate fails.
 **CPD decision:** copy/paste detection is deferred to a follow-up. Similar DTOs and mapping
 code across modules need a separately reviewed duplication threshold and exclusions before
 CPD becomes a blocking gate. PMD is the only new gate in this change.
+
+## Workshop 1 Trust Boundary
+
+The API currently accepts unauthenticated requests and does not enforce account ownership. Validation, transactions, and safe error responses are implemented controls, but they do not establish who may operate an account. Use fictional data in a local training environment. Swagger and Flyway demonstration data are part of this educational execution path; deployment-specific exposure and seed-data policies remain subsequent work.
+
+Workshop 1 evidence and any execution limitations are recorded in [the evidence index](../evidence/README.md). Existing static-analysis jobs extend the initial workshop foundation; their presence does not demonstrate completion of Workshops 2–4.

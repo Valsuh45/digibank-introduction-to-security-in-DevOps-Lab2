@@ -1,0 +1,6 @@
+ version | description | success 
+---------+-------------+---------
+ 1       | init schema | t
+ 2       | seed data   | t
+(2 rows)
+

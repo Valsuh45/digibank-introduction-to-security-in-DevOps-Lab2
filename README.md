@@ -88,7 +88,7 @@ Each Maven module also has its own README:
 
 ## Development Status
 
-> **Status: Implemented for Workshop 1**
+> **Status: Workshop 1 implementation present; current verification and remaining proof are tracked in [the evidence index](docs/evidence/README.md).**
 
 The repository now includes:
 
@@ -126,10 +126,11 @@ docker compose version
 
 ## Run Locally With Docker Compose
 
-Start the full application stack with PostgreSQL and the Spring Boot web application:
+Start the full application stack with PostgreSQL and the Spring Boot web application from a Bash shell:
 
 ```bash
-export POSTGRES_PASSWORD=change-me-locally
+read -r -s -p "Local PostgreSQL password: " POSTGRES_PASSWORD; echo
+export POSTGRES_PASSWORD
 docker compose up --build
 ```
 
@@ -147,6 +148,8 @@ Stop the stack with:
 ```bash
 docker compose down
 ```
+
+For build commands, configuration defaults, database persistence, and running the JAR directly, see [local development](docs/operations/local-development.md). This educational API has no authentication or ownership checks; use demonstration data in a local training environment.
 
 ## Contribution Guidelines
 

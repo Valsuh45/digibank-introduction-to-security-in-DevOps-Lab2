@@ -19,6 +19,7 @@ DigiBank uses Maven modules to keep code organized by responsibility. This makes
 The dependency direction is intentionally simple:
 
 - Domain modules depend on `common-module`.
+- `account-module` depends on `customer-module` to verify that the customer exists before account creation.
 - `transfer-module` depends on `account-module` because transfers update account balances.
 - `digibank-web` depends on all modules because it assembles the runnable application.
 
