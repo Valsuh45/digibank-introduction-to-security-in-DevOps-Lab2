@@ -52,7 +52,7 @@
 
 ## Points to address
 
-- [ ] Run `mvn org.owasp:dependency-check-maven:check` and review the HTML report.
+- [ ] Run `mvn org.owasp:dependency-check-maven:aggregate` and review the HTML report.
 - [ ] Confirm no CVSS >= 7 findings remain, or document accepted risks in
       `dependency-check-suppressions.xml`.
 - [ ] Rebuild the image and re-scan with Trivy (HIGH/CRITICAL) in CI.

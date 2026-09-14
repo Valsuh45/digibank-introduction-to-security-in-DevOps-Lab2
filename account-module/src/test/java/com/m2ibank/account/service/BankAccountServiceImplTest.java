@@ -8,6 +8,7 @@ import com.m2ibank.account.entity.BankAccount;
 import com.m2ibank.account.repository.BankAccountRepository;
 import com.m2ibank.common.exception.BusinessException;
 import com.m2ibank.common.exception.ResourceNotFoundException;
+import com.m2ibank.customer.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,11 +44,14 @@ class BankAccountServiceImplTest {
     @Mock
     private AccountNumberGenerator accountNumberGenerator;
 
+    @Mock
+    private CustomerService customerService;
+
     private BankAccountService service;
 
     @BeforeEach
     void setUp() {
-        service = new BankAccountServiceImpl(repository, accountNumberGenerator);
+        service = new BankAccountServiceImpl(repository, accountNumberGenerator, customerService);
     }
 
     @Test
@@ -63,6 +67,7 @@ class BankAccountServiceImplTest {
 
         AccountResponseDto response = service.createAccount(request);
 
+        verify(customerService).getCustomerById(42L);
         ArgumentCaptor<BankAccount> accountCaptor = ArgumentCaptor.forClass(BankAccount.class);
         org.mockito.Mockito.verify(repository).save(accountCaptor.capture());
         BankAccount persisted = accountCaptor.getValue();
@@ -158,6 +163,89 @@ class BankAccountServiceImplTest {
         assertThatThrownBy(() -> service.updateBalance("123456789012", new BigDecimal("-0.01")))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage("Account balance must not be negative");
+    }
+
+    @Test
+    void unknownCustomerIsRejectedBeforeGeneratingOrSavingAnAccount() {
+        when(customerService.getCustomerById(404L))
+                .thenThrow(new ResourceNotFoundException("Customer not found"));
+
+        assertThatThrownBy(() -> service.createAccount(
+                new AccountRequestDto(404L, AccountType.CURRENT, BigDecimal.ZERO)))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Customer not found");
+
+        org.mockito.Mockito.verifyNoInteractions(repository, accountNumberGenerator);
+    }
+
+    @Test
+    void balancePrecisionIsEnforcedByEntityEvenOutsideHttpValidation() {
+        for (String amount : List.of("0.001", "100000000000000000", "1E+18")) {
+            assertThatThrownBy(() -> BankAccount.open("123456789012", new BigDecimal(amount),
+                    "XAF", AccountType.CURRENT, 42L))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("17 integer digits and 2 decimal places");
+        }
+    }
+
+    @Test
+    void accountLookupTrimsSurroundingWhitespace() {
+        when(repository.findByAccountNumber("123456789012"))
+                .thenReturn(Optional.of(account(9L, "123456789012")));
+
+        assertThat(service.findByAccountNumber(" 123456789012 ").id()).isEqualTo(9L);
+    }
+
+    @Test
+    void invalidCreationRequestsNeverReachPersistence() {
+        List<AccountRequestDto> invalid = java.util.Arrays.asList(
+                null,
+                new AccountRequestDto(null, AccountType.CURRENT, BigDecimal.ZERO),
+                new AccountRequestDto(0L, AccountType.CURRENT, BigDecimal.ZERO),
+                new AccountRequestDto(-1L, AccountType.CURRENT, BigDecimal.ZERO),
+                new AccountRequestDto(1L, null, BigDecimal.ZERO),
+                new AccountRequestDto(1L, AccountType.CURRENT, null));
+        for (AccountRequestDto request : invalid) {
+            assertThatThrownBy(() -> service.createAccount(request)).isInstanceOf(BusinessException.class);
+        }
+        org.mockito.Mockito.verifyNoInteractions(repository, accountNumberGenerator, customerService);
+    }
+
+    @Test
+    void invalidIdentifiersNeverReachPersistence() {
+        for (Long id : java.util.Arrays.asList(null, 0L, -1L)) {
+            assertThatThrownBy(() -> service.getAccountDetails(id)).isInstanceOf(ResourceNotFoundException.class);
+            assertThatThrownBy(() -> service.getBalance(id)).isInstanceOf(ResourceNotFoundException.class);
+            assertThatThrownBy(() -> service.getAccountsByCustomerId(id)).isInstanceOf(BusinessException.class);
+        }
+        for (String number : java.util.Arrays.asList(null, "", "123", "000000000001", "12345678901x")) {
+            assertThatThrownBy(() -> service.findByAccountNumber(number)).isInstanceOf(ResourceNotFoundException.class);
+        }
+        org.mockito.Mockito.verifyNoInteractions(repository);
+    }
+
+    @Test
+    void exhaustedNumberGenerationFailsWithoutSaving() {
+        when(accountNumberGenerator.generate()).thenReturn("123456789012");
+        when(repository.findByAccountNumber("123456789012"))
+                .thenReturn(Optional.of(account(1L, "123456789012")));
+        assertThatThrownBy(() -> service.createAccount(new AccountRequestDto(1L, AccountType.CURRENT, BigDecimal.ZERO)))
+                .isInstanceOf(BusinessException.class).hasMessage("Unable to create bank account");
+        verify(accountNumberGenerator, org.mockito.Mockito.times(10)).generate();
+        verify(repository, org.mockito.Mockito.never()).save(any());
+    }
+
+    @Test
+    void accountDetailsAndBalanceReflectPersistedValues() {
+        BankAccount persisted = account(1L, "123456789012");
+        when(repository.findById(1L)).thenReturn(Optional.of(persisted));
+        AccountResponseDto response = service.getAccountDetails(1L);
+        assertThat(response.id()).isEqualTo(1L);
+        assertThat(response.currency()).isEqualTo("XAF");
+        assertThat(response.accountType()).isEqualTo(AccountType.SAVINGS);
+        assertThat(response.status()).isEqualTo(AccountStatus.ACTIVE);
+        assertThat(response.createdAt()).isEqualTo(persisted.getCreatedAt());
+        assertThat(service.getBalance(1L)).isEqualByComparingTo("1250.50");
     }
 
     private BankAccount account(Long id, String accountNumber) {

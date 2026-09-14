@@ -1,5 +1,7 @@
 # Workshop 2 SAST Evidence
 
+This records the original team analysis. For the integrated revision, measured gates and remaining external checks, see [security-gap fixes](security-gap-fixes.md).
+
 ## Part 1: Framework and objectives
 
 Workshop 2 applies static application security testing (SAST) to the Workshop 1 DigiBank modular monolith. The scope is source code, bytecode, configuration, Maven dependency declarations, and test robustness before dynamic analysis in Workshop 3.
@@ -57,12 +59,11 @@ Run Workshop 2 analysis checks explicitly:
 
 ```bash
 mvn -B clean install -DskipTests
-mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
-mvn -B org.pitest:pitest-maven:mutationCoverage
+mvn -B org.owasp:dependency-check-maven:aggregate
+mvn -B -pl customer-module,account-module,transfer-module org.pitest:pitest-maven:mutationCoverage
 mvn -B verify sonar:sonar \
   -Dsonar.projectKey=digibank-parent \
-  -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
-  -Dsonar.token="$SONAR_TOKEN"
+  -Dsonar.qualitygate.wait=true
 ```
 
 Acceptance requires a passing build and tests, reduced or justified analysis findings, preserved modular boundaries, no committed secrets, and documented decisions for retained alerts or false positives.

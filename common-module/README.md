@@ -22,5 +22,5 @@ This module helps keep API errors predictable and safe. Controllers and services
 Run this module alone with:
 
 ```bash
-mvn -pl common-module test
+mvn -pl common-module -am test
 ```

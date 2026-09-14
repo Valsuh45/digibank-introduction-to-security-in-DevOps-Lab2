@@ -5,7 +5,7 @@
 # image, scans the image with Trivy, and publishes the resulting reports and metadata as artifacts
 # so the checks are reproducible, traceable, and comparable over time.
 #
-# The NVD API key is injected from GitHub repository secrets and is never committed to the repo.
+# The NVD API key is injected only from GitHub Secrets. Previously exposed keys must be revoked.
 #
 name: DigiBank Container and Dependency Security Pipeline
 
@@ -41,15 +41,17 @@ jobs:
           cache: maven
 
       - name: Build and test DigiBank
-        run: mvn -B clean verify
+        run: mvn -B clean install
 
       - name: Export dependency tree
         run: mvn -B dependency:tree > dependency-tree.txt
 
       - name: Run OWASP Dependency-Check
         env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY || 'D721014C-022C-4878-A4BB-0843885ED9CF' }}
-        run: mvn -B org.owasp:dependency-check-maven:check
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          test -n "$NVD_API_KEY" || { echo "Configure the rotated NVD_API_KEY repository secret"; exit 1; }
+          mvn -B org.owasp:dependency-check-maven:aggregate
 
       - name: Build Docker image
         run: docker build -t digibank:ci .
@@ -64,6 +66,7 @@ jobs:
         with:
           image-ref: digibank:ci
           format: table
+          output: target/trivy-image.txt
           severity: HIGH,CRITICAL
           exit-code: "1"
           ignore-unfixed: true
@@ -74,7 +77,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: target/dependency-check-report.html
+          path: |
+            target/dependency-check-report.html
+            target/dependency-check-report.json
+          if-no-files-found: warn
+
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-image-report
+          path: target/trivy-image.txt
           if-no-files-found: warn
 
       - name: Upload dependency tree

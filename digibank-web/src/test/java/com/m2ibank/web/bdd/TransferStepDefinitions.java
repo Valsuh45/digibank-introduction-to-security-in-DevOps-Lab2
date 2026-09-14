@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * <p>The steps use real Spring services against the test profile. They prove that seeded accounts can
  * transfer money, balances move atomically, insufficient funds are rejected, and failed transfers leave
- * the source balance unchanged.</p>
+ * both balances and transaction histories unchanged.</p>
  */
 public class TransferStepDefinitions {
 
@@ -36,6 +36,8 @@ public class TransferStepDefinitions {
     private String targetAccountNumber;
     private BigDecimal sourceStartingBalance;
     private BigDecimal targetStartingBalance;
+    private int sourceHistorySize;
+    private int targetHistorySize;
     private BigDecimal transferAmount;
     private TransferResponseDto transferResponse;
 
@@ -65,6 +67,9 @@ public class TransferStepDefinitions {
         sourceAccountNumber = source;
         targetAccountNumber = target;
         sourceStartingBalance = accountService.findByAccountNumber(source).balance();
+        targetStartingBalance = accountService.findByAccountNumber(target).balance();
+        sourceHistorySize = transferService.getAccountTransactionHistory(source).size();
+        targetHistorySize = transferService.getAccountTransactionHistory(target).size();
         transferAmount = sourceStartingBalance.add(BigDecimal.ONE);
 
         assertThatThrownBy(() -> transferService.executeTransfer(
@@ -96,10 +101,14 @@ public class TransferStepDefinitions {
         assertThat(transferAmount).isGreaterThan(sourceStartingBalance);
     }
 
-    @And("the source balance remains unchanged")
+    @And("both balances and transaction histories remain unchanged")
     public void sourceBalanceRemainsUnchanged() {
         BigDecimal sourceEndingBalance = accountService.findByAccountNumber(sourceAccountNumber).balance();
 
         assertThat(sourceEndingBalance).isEqualByComparingTo(sourceStartingBalance);
+        assertThat(accountService.findByAccountNumber(targetAccountNumber).balance())
+                .isEqualByComparingTo(targetStartingBalance);
+        assertThat(transferService.getAccountTransactionHistory(sourceAccountNumber)).hasSize(sourceHistorySize);
+        assertThat(transferService.getAccountTransactionHistory(targetAccountNumber)).hasSize(targetHistorySize);
     }
 }

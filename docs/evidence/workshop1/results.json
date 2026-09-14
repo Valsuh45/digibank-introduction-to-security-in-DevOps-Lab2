@@ -1,0 +1,19 @@
+{
+  "date": "2026-09-11",
+  "baseCommit": "84048ed60105c0f852f2abdca3bd10b540a39ea5",
+  "localChanges": true,
+  "tests": {
+    "tests": 85,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pmd": "passed",
+  "spotbugsFindSecurityBugs": "passed",
+  "imageId": "sha256:dcdd4f4d845d76e849c259c4a56342c87a09fb082ebf39aea3e2243e8072f48b",
+  "imageUser": "digibank",
+  "httpRequestsPassed": 57,
+  "restartResourcesUnchanged": 7,
+  "finalRevisionGithubCI": "not run; local changes not committed/pushed",
+  "baseGithubCI": "https://github.com/Valsuh45/digibank-introduction-to-security-in-DevOps-Lab2/actions/runs/34573756139"
+}

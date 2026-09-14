@@ -1,0 +1,85 @@
+final-verify-pmd.log
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.154 s -- in com.m2ibank.common.constant.DigiBankConstantsTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s -- in com.m2ibank.common.exception.DigiBankExceptionTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.472 s -- in com.m2ibank.common.api.ApiResponseTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.059 s -- in com.m2ibank.common.api.ErrorDetailsTest
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.73 s -- in com.m2ibank.customer.service.CustomerServiceImplTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.287 s -- in com.m2ibank.customer.controller.CustomerControllerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.062 s -- in com.m2ibank.customer.dto.CustomerRequestDtoValidationTest
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.170 s -- in com.m2ibank.account.service.AccountNumberGeneratorTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.74 s -- in com.m2ibank.account.service.BankAccountServiceImplTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.560 s -- in com.m2ibank.account.dto.AccountRequestDtoValidationTest
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.47 s -- in com.m2ibank.transfer.service.TransferServiceImplTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.524 s -- in com.m2ibank.transfer.dto.TransferRequestDtoTest
+[INFO] Tests run: 29, Failures: 0, Errors: 0, Skipped: 0
+2026-09-11T09:36:09.589+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.033s)
+2026-09-11T09:36:09.687+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 22.12 s -- in com.m2ibank.web.HomepageTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.254 s -- in com.m2ibank.web.exception.GlobalExceptionHandlerTest
+2026-09-11T09:36:26.177+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.003s)
+2026-09-11T09:36:26.183+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 2
+2026-09-11T09:36:26.184+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.441 s -- in com.m2ibank.web.DigiBankApplicationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.041 s -- in com.m2ibank.web.OpenApiDocumentationTest
+2026-09-11T09:36:28.756+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.004s)
+2026-09-11T09:36:28.774+01:00  INFO 364 --- [digibank] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.589 s -- in com.m2ibank.web.BankingHttpIntegrationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.m2ibank.web.config.OpenApiConfigTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in com.m2ibank.web.FlywayMigrationTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.367 s -- in com.m2ibank.web.bdd.RunCucumberTest
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] Reactor Summary for digibank-parent 1.0.0-SNAPSHOT:
+[INFO] digibank-parent .................................... SUCCESS [ 13.035 s]
+[INFO] common-module ...................................... SUCCESS [  3.886 s]
+[INFO] customer-module .................................... SUCCESS [ 15.257 s]
+[INFO] account-module ..................................... SUCCESS [ 14.055 s]
+[INFO] transfer-module .................................... SUCCESS [ 17.982 s]
+[INFO] digibank-web ....................................... SUCCESS [ 32.522 s]
+[INFO] BUILD SUCCESS
+
+spotbugs.log
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] No errors/warnings found
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] No errors/warnings found
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] No errors/warnings found
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] No errors/warnings found
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] No errors/warnings found
+[INFO] Reactor Summary for digibank-parent 1.0.0-SNAPSHOT:
+[INFO] digibank-parent .................................... SUCCESS [ 13.142 s]
+[INFO] common-module ...................................... SUCCESS [ 11.612 s]
+[INFO] customer-module .................................... SUCCESS [  7.528 s]
+[INFO] account-module ..................................... SUCCESS [  5.921 s]
+[INFO] transfer-module .................................... SUCCESS [  5.948 s]
+[INFO] digibank-web ....................................... SUCCESS [  6.471 s]
+[INFO] BUILD SUCCESS
+
+restart.log
+digibank-app-1  | 2026-09-11T08:38:47.342Z  INFO 1 --- [digibank] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.074s)
+digibank-app-1  | 2026-09-11T08:38:47.382Z  INFO 1 --- [digibank] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 2
+digibank-app-1  | 2026-09-11T08:38:47.388Z  INFO 1 --- [digibank] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+digibank-app-1  | 2026-09-11T08:38:53.274Z  INFO 1 --- [digibank] [           main] com.m2ibank.web.DigiBankApplication      : Started DigiBankApplication in 13.691 seconds (process running for 14.464)

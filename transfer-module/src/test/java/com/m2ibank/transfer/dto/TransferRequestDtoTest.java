@@ -31,7 +31,7 @@ class TransferRequestDtoTest {
 
         assertThat(violations)
                 .extracting(violation -> violation.getPropertyPath().toString())
-                .containsExactlyInAnyOrder(
+                .contains(
                         "sourceAccountNumber",
                         "targetAccountNumber",
                         "amount",
@@ -41,11 +41,20 @@ class TransferRequestDtoTest {
     @Test
     void acceptsValidTransferInputWithoutDescription() {
         TransferRequestDto request = new TransferRequestDto(
-                "ACC-001",
-                "ACC-002",
+                " 100000000001 ",
+                "100000000002",
                 new BigDecimal("25.00"),
                 null);
 
         assertThat(validator.validate(request)).isEmpty();
+    }
+    @Test
+    void rejectsUnsupportedMonetaryPrecisionAndMalformedAccountNumbers() {
+        TransferRequestDto request = new TransferRequestDto("ACC-001", "100000000002",
+                new BigDecimal("1.001"), null);
+
+        assertThat(validator.validate(request))
+                .extracting(violation -> violation.getPropertyPath().toString())
+                .contains("sourceAccountNumber", "amount");
     }
 }

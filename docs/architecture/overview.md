@@ -33,3 +33,11 @@ Security controls are layered:
 - Entities and database constraints protect persisted state.
 - The global exception handler prevents internal details from leaking.
 - CI verifies tests, source scan, container scan, and Docker Compose smoke behavior.
+
+## Follow One Transfer
+
+An HTTP client sends JSON to the transfer controller. Bean Validation checks its DTO; the controller delegates to the transfer service. The service loads accounts, enforces banking rules, changes balances, and saves the transfer record within a Spring transaction. JPA repositories perform persistence and PostgreSQL constraints provide a final integrity boundary. Response DTOs control exposed fields, and the web exception handler maps failures to public HTTP responses.
+
+The transfer implementation persists account changes through the account repository; it does not call `BankAccountService.updateBalance`. All participating repositories use the same application transaction and database. A transaction provides atomicity; it alone does not establish safe behavior for simultaneous balance updates.
+
+Validation checks the shape of a request. Business rules decide whether an operation is allowed by the banking domain. Database constraints protect persisted relationships. None of these identifies the caller: this educational version has no authentication or customer/account ownership authorization. Workshop 1 establishes the local functional base; later security analysis must explicitly examine that trust boundary.

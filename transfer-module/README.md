@@ -33,5 +33,5 @@ Failed transfer attempts are rejected through safe domain exceptions and do not 
 Run this module alone with:
 
 ```bash
-mvn -pl transfer-module test
+mvn -pl transfer-module -am test
 ```

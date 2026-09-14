@@ -22,8 +22,8 @@ Migrations are kept aligned with the customer, account, and transfer entities. H
 
 ## Delivery and Evidence
 
-The Docker image uses a Maven build stage and a Java 17 runtime stage, runs as an unprivileged user, and exposes an application health check. Docker Compose requires `POSTGRES_PASSWORD`, waits for PostgreSQL health, and configures the application exclusively through environment variables.
+The Docker image uses a Maven build stage and a Java 17 runtime stage, runs as an unprivileged user. The application health check is configured in Docker Compose, not in the Dockerfile. Docker Compose requires `POSTGRES_PASSWORD`, waits for PostgreSQL health, and configures the application exclusively through environment variables.
 
-GitHub Actions runs `mvn clean verify`, scans the repository filesystem, scans the built Docker image, and starts the Docker Compose stack for a smoke test. Cucumber exercises transfer behavior through the Spring service layer, while the Compose smoke test verifies real HTTP health, OpenAPI, and transfer endpoints.
+GitHub Actions runs `mvn clean verify`, PMD and SpotBugs/Find Security Bugs in separate jobs, scans the repository filesystem, scans the built Docker image, and starts the Docker Compose stack for a smoke test. Cucumber exercises transfer behavior through the Spring service layer, while the Compose smoke test verifies real HTTP health, OpenAPI, and transfer endpoints.
 
 Audit commands and expected evidence are recorded in `docs/evidence/README.md`; generated logs and screenshots are intentionally not committed by default.

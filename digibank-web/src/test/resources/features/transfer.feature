@@ -2,7 +2,7 @@
 #
 # These scenarios describe the most important transfer outcomes in plain language. They prove that a
 # normal transfer moves money between seeded accounts and that an excessive transfer is rejected without
-# changing the source balance.
+# changing either balance or transaction history.
 #
 Feature: Secure money transfers
 
@@ -16,4 +16,4 @@ Feature: Secure money transfers
     Given the seeded DigiBank accounts are available
     When an excessive transfer is attempted from account "100000000002" to account "100000000001"
     Then the transfer is rejected for insufficient balance
-    And the source balance remains unchanged
+    And both balances and transaction histories remain unchanged

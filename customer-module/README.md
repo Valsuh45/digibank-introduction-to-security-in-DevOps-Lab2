@@ -29,5 +29,5 @@ The module validates client input at the DTO/controller boundary and also relies
 Run this module alone with:
 
 ```bash
-mvn -pl customer-module test
+mvn -pl customer-module -am test
 ```
