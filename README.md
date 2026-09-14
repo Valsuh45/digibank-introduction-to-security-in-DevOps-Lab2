@@ -88,7 +88,7 @@ Each Maven module also has its own README:
 
 ## Development Status
 
-> **Status: Implemented for Workshop 1**
+> **Status: Implemented for Workshops 1 and 4**
 
 The repository now includes:
 
@@ -98,11 +98,14 @@ The repository now includes:
 - [x] Account management
 - [x] Transfers and transaction history
 - [x] Validation and centralized exception handling
-- [x] OpenAPI / Swagger documentation
+- [x] OpenAPI / Swagger documentation (disabled by default, enabled in the dev profile)
 - [x] JUnit and Cucumber tests
 - [x] Docker and Docker Compose support
 - [x] GitHub Actions CI with Maven verification, filesystem scanning, container scanning, and Compose smoke testing
 - [x] Weekly Dependabot monitoring for Maven and GitHub Actions dependencies
+- [x] OWASP Dependency-Check for known vulnerabilities in Maven dependencies (CVSS >= 7 gate)
+- [x] Container hardening: multi-stage Dockerfile, non-root runtime user, `.dockerignore`
+- [x] Container and dependency security pipeline (Dependency-Check + Docker build + Trivy image scan + artifact publishing)
 - [x] SAST gates with PMD and SpotBugs / Find Security Bugs
 - [x] DAST (Workshop 3): generic error handling, input-validation hardening, profile-gated API docs, a Newman-ready Postman validation collection, and a DAST CI pipeline (Newman + OWASP ZAP)
 
