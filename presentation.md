@@ -6,26 +6,34 @@
 **Architecture:** Modular Monolith (Spring Boot 3.5, Java 17, PostgreSQL, Maven multi-module)
 **Repository:** `Valsuh45/digibank-introduction-to-security-in-DevOps-Lab2`
 
+![Placeholder: DigiBank cover / hero image](images/cover.png)
+
 ---
 
-## Table of Contents
+## Agenda
 
-1. [Project Overview](#project-overview)
-2. [Lab 1 — Secure Design & Implementation](#lab-1--secure-design--implementation)
-3. [Lab 2 — Static Application Security Testing (SAST)](#lab-2--static-application-security-testing-sast)
-4. [Lab 3 — Dynamic Application Security Testing (DAST)](#lab-3--dynamic-application-security-testing-dast)
-5. [Lab 4 — Container & Dependency Security](#lab-4--container--dependency-security)
-6. [The Complete DevSecOps Pipeline](#the-complete-devsecops-pipeline)
-7. [Overall Challenges & Solutions](#overall-challenges--solutions)
-8. [Conclusion](#conclusion)
+1. Project Overview & Architecture
+2. The DevSecOps / "Shift Left" Journey
+3. **Lab 1** — Secure Design & Implementation
+4. **Lab 2** — Static Application Security Testing (SAST)
+5. **Lab 3** — Dynamic Application Security Testing (DAST)
+6. **Lab 4** — Container & Dependency Security
+7. The Complete DevSecOps Pipeline (CI/CD)
+8. Overall Challenges & Solutions
+9. Conclusion & Q&A
+
+> For **each lab** we present: a complete description, the learning objectives, the steps
+> involved, the required tools/environments, the expected results, and the challenges
+> encountered with the solutions implemented.
 
 ---
 
 ## Project Overview
 
-DigiBank is a fictional digital banking application built across four progressive DevSecOps
-workshops. Each workshop adds a new layer of security analysis to the same codebase, following the
-**"Shift Left"** philosophy — moving security earlier and earlier in the software lifecycle.
+DigiBank is a fictional digital banking application built across **four progressive DevSecOps
+workshops**. Each workshop adds a new layer of security analysis to the **same codebase**,
+following the **"Shift Left"** philosophy — moving security earlier and earlier in the software
+lifecycle.
 
 | Lab | Security Layer | Question it answers |
 |---|---|---|
@@ -38,7 +46,11 @@ workshops. Each workshop adds a new layer of security analysis to the same codeb
 accounts, transaction history, REST API documentation (Swagger/OpenAPI), automated testing, Docker
 containerization, and GitHub Actions CI/CD.
 
-### Technology Stack
+![Placeholder: DigiBank application screenshot (landing page)](images/app-landing.png)
+
+---
+
+## Technology Stack
 
 | Area | Technology |
 |---|---|
@@ -53,7 +65,11 @@ containerization, and GitHub Actions CI/CD.
 | Containerization | Docker + Docker Compose |
 | CI/CD | GitHub Actions |
 
-### Module Structure
+![Placeholder: Technology stack diagram](images/tech-stack.png)
+
+---
+
+## Module Structure
 
 ```text
 digibank-parent/
@@ -71,22 +87,47 @@ digibank-parent/
 └── pom.xml
 ```
 
+![Placeholder: Module / architecture diagram](images/architecture.png)
+
 ---
 
-## Lab 1 — Secure Design & Implementation
+## The DevSecOps Journey (Shift Left)
 
-### Complete Description
+Security is not a final step — it is a **continuous, integrated property** of the software
+lifecycle. Each lab layers a new security control onto the same codebase:
 
-Lab 1 is the foundation. It builds the **first executable version of DigiBank** as a **modular
-monolith** — a single Spring Boot application split into clean Maven modules by business domain.
-The goal is not a disposable prototype but a **solid, stable, documented, testable base** that the
-later security workshops can build on without reconstruction.
+```text
+Lab 1  ──►  Lab 2  ──►  Lab 3  ──►  Lab 4
+Design    Static      Dynamic     Supply chain
++ build   (SAST)      (DAST)      (containers/deps)
+          └──────────────┬──────────────┘
+                         ▼
+              Automated CI/CD pipeline
+              (re-checks everything)
+```
+
+![Placeholder: Shift Left / DevSecOps pipeline diagram](images/shift-left.png)
+
+---
+
+# Lab 1 — Secure Design & Implementation
+
+## Complete Description
+
+Lab 1 is the **foundation**. It builds the **first executable version of DigiBank** as a
+**modular monolith** — a single Spring Boot application split into clean Maven modules by business
+domain. The goal is not a disposable prototype but a **solid, stable, documented, testable base**
+that the later security workshops can build on without reconstruction.
 
 The architecture is deliberately a **modular monolith** rather than microservices: it gives clean
 domain boundaries while keeping local development, testing, scanning, and deployment simple enough
 for a pedagogical setting.
 
-### Learning Objectives
+![Placeholder: Lab 1 result — running application](images/lab1-app.png)
+
+---
+
+## Lab 1 — Learning Objectives
 
 - **A1.1** — Explain DigiBank's role in the course and justify the modular-monolith choice.
 - **A1.2** — Create a parent Maven Spring Boot project with clear module separation.
@@ -98,7 +139,9 @@ for a pedagogical setting.
 - **A1.7** — Prepare the app for Docker execution and GitHub Actions automation.
 - **A1.8** — Deliver a sound base for future SAST, DAST, and dependency/container workshops.
 
-### Steps Involved
+---
+
+## Lab 1 — Steps Involved
 
 1. **Project setup** — created the Maven parent POM with Java 17 and Spring Boot 3.5, then added
    the five modules (`common`, `customer`, `account`, `transfer`, `digibank-web`).
@@ -123,14 +166,32 @@ for a pedagogical setting.
 8. **CI** — a GitHub Actions workflow running Maven verification.
 9. **Documentation** — READMEs, architecture, API, module, and operations docs.
 
-### Required Tools / Environment
+![Placeholder: Lab 1 steps / flow diagram](images/lab1-steps.png)
 
-- Java JDK 17, Maven 3.9+, Git
+---
+
+## Lab 1 — Required Tools / Environment
+
+- Java JDK 17
+- Maven 3.9+
+- Git
 - IntelliJ IDEA (or another Java IDE)
-- PostgreSQL 15+ or Docker with Docker Compose
+- PostgreSQL 15+ **or** Docker with Docker Compose
 - Docker / Docker Compose
 
-### Expected Results
+Verify the environment:
+
+```bash
+java -version
+mvn -version
+git --version
+docker --version
+docker compose version
+```
+
+---
+
+## Lab 1 — Expected Results
 
 - A multi-module Maven project that compiles and runs.
 - REST APIs for customers, accounts, and transfers.
@@ -139,7 +200,11 @@ for a pedagogical setting.
 - A runnable Docker image and a Docker Compose stack.
 - A GitHub Actions pipeline that validates the build.
 
-### Challenges Encountered & Solutions
+![Placeholder: Swagger UI screenshot](images/swagger.png)
+
+---
+
+## Lab 1 — Challenges Encountered & Solutions
 
 | Challenge | Solution |
 |---|---|
@@ -151,9 +216,9 @@ for a pedagogical setting.
 
 ---
 
-## Lab 2 — Static Application Security Testing (SAST)
+# Lab 2 — Static Application Security Testing (SAST)
 
-### Complete Description
+## Complete Description
 
 Lab 2 applies **Static Application Security Testing** to DigiBank's source code, bytecode,
 configuration, and Maven dependencies — **without running the application**. It detects, interprets,
@@ -164,7 +229,11 @@ The scope covers Java code, REST controllers, services, entities, DTOs, exceptio
 application configuration, and Maven dependency declarations. It does **not** cover runtime behavior
 (that is Lab 3).
 
-### Learning Objectives
+![Placeholder: SAST concept / scan illustration](images/sast.png)
+
+---
+
+## Lab 2 — Learning Objectives
 
 - **A2.1** — Explain SAST's role in DevSecOps and link it to Shift Left.
 - **A2.2** — Analyze DigiBank's source code from a security perspective.
@@ -176,16 +245,24 @@ application configuration, and Maven dependency declarations. It does **not** co
 - **A2.7** — Justify remediations from a technical and security perspective.
 - **A2.8** — Deliver a more robust version ready for dynamic testing (Lab 3).
 
-### Tools Used
+---
 
-- **SonarQube** — primary static code analysis (code quality + security).
-- **OWASP Dependency-Check** — scans Maven dependencies for known CVEs.
-- **PITest** — mutation testing to measure test robustness.
-- **SpotBugs + Find Security Bugs** — Java bug patterns + security-sensitive code patterns.
-- **PMD** — static code quality gate.
-- **JUnit 5** — verify remediations don't break behavior.
+## Lab 2 — Tools Used
 
-### Steps Involved
+| Tool | Purpose |
+|---|---|
+| **SonarQube** | Primary static code analysis (code quality + security) |
+| **OWASP Dependency-Check** | Scans Maven dependencies for known CVEs |
+| **PITest** | Mutation testing to measure test robustness |
+| **SpotBugs + Find Security Bugs** | Java bug patterns + security-sensitive code patterns |
+| **PMD** | Static code quality gate |
+| **JUnit 5** | Verify remediations don't break behavior |
+
+![Placeholder: SonarQube / scan report screenshot](images/sonarqube.png)
+
+---
+
+## Lab 2 — Steps Involved
 
 1. **Environment preparation** — configured the analysis tools in the parent POM (SonarQube
    scanner, OWASP Dependency-Check, PITest, Surefire).
@@ -197,10 +274,12 @@ application configuration, and Maven dependency declarations. It does **not** co
    - Dependency versions requiring CVE review.
    - Financial business rules that must be enforced in services.
    - Test gaps allowing mutations to survive on critical rules.
-3. **Remediation** — fixed the identified weaknesses (see below).
+3. **Remediation** — fixed the identified weaknesses (see next slide).
 4. **Revalidation** — reran the build, tests, and analysis tools to confirm improvements.
 
-### Remediations Implemented
+---
+
+## Lab 2 — Remediations Implemented
 
 - **Secrets in configuration** — database credentials moved to environment variables; no committed
   default password; SQL/error detail exposure disabled.
@@ -217,7 +296,9 @@ application configuration, and Maven dependency declarations. It does **not** co
 - **Test strengthening** — added focused tests for malformed input, transfer rejection branches,
   insufficient funds, safe not-found responses, and generic errors (improves PITest mutation score).
 
-### Expected Results
+---
+
+## Lab 2 — Expected Results
 
 - A passing build and test suite.
 - Reduced or justified static-analysis findings.
@@ -225,7 +306,11 @@ application configuration, and Maven dependency declarations. It does **not** co
 - No committed secrets.
 - Documented decisions for retained alerts / false positives.
 
-### Challenges Encountered & Solutions
+![Placeholder: Dependency-Check report screenshot](images/dependency-check.png)
+
+---
+
+## Lab 2 — Challenges Encountered & Solutions
 
 | Challenge | Solution |
 |---|---|
@@ -236,9 +321,9 @@ application configuration, and Maven dependency declarations. It does **not** co
 
 ---
 
-## Lab 3 — Dynamic Application Security Testing (DAST)
+# Lab 3 — Dynamic Application Security Testing (DAST)
 
-### Complete Description
+## Complete Description
 
 Lab 3 applies **Dynamic Application Security Testing** — observing the **running application** from
 the outside, like an attacker, by sending real HTTP requests. It complements Lab 2's static analysis
@@ -248,7 +333,11 @@ The app is started against PostgreSQL, the REST surface is mapped, targeted scen
 **Postman**, replayed automatically with **Newman**, and observed with **OWASP ZAP**. Each finding is
 traced back to a code/configuration choice, remediated, and revalidated.
 
-### Learning Objectives
+![Placeholder: DAST / ZAP scan illustration](images/dast.png)
+
+---
+
+## Lab 3 — Learning Objectives
 
 - Explain DAST's role and how it extends the DevSecOps logic.
 - Build consistent dynamic test scenarios with Postman.
@@ -256,26 +345,36 @@ traced back to a code/configuration choice, remediated, and revalidated.
 - Link findings to DTOs, services, handlers, and configuration.
 - Write corrections and revalidate everything (Postman/Newman + ZAP).
 
-### Tools Used
+---
 
-- **Postman** — build and send HTTP request scenarios.
-- **Newman** — run Postman collections from the command line (automation).
-- **OWASP ZAP** — automated web scanner / baseline scan.
-- **curl** — targeted manual tests.
-- **Docker Compose** — reproducible runtime environment.
+## Lab 3 — Tools Used
 
-### Steps Involved
+| Tool | Purpose |
+|---|---|
+| **Postman** | Build and send HTTP request scenarios |
+| **Newman** | Run Postman collections from the command line (automation) |
+| **OWASP ZAP** | Automated web scanner / baseline scan |
+| **curl** | Targeted manual tests |
+| **Docker Compose** | Reproducible runtime environment |
+
+![Placeholder: Postman collection screenshot](images/postman.png)
+
+---
+
+## Lab 3 — Steps Involved
 
 1. **Prepare the DAST environment** — start DigiBank + PostgreSQL, map the API with Swagger/curl.
 2. **Build dynamic test scenarios** in Postman (functional, input-validation, error-handling,
    information-exposure, remediation checks).
 3. **Observe with OWASP ZAP** — baseline scan to compare the visible surface before/after.
-4. **Identify dynamic vulnerabilities** — see table below.
+4. **Identify dynamic vulnerabilities** — see table on next slide.
 5. **Remediate** the confirmed issues.
 6. **Revalidate** — replay the Postman collection with Newman and rerun ZAP.
 7. **Automate** — add a DAST CI pipeline (`.github/workflows/digibank-dast.yml`).
 
-### Dynamic Findings & Remediations
+---
+
+## Lab 3 — Dynamic Findings & Remediations
 
 | # | Observed weakness (runtime) | Root cause | Remediation |
 |---|---|---|---|
@@ -289,14 +388,20 @@ traced back to a code/configuration choice, remediated, and revalidated.
 Already-defensive areas were verified rather than changed: transfer amount validation, null/zero/
 same-account rejection, and negative-balance rejection.
 
-### Expected Results
+---
+
+## Lab 3 — Expected Results
 
 - Essential business flows still work (functional regression check).
 - Prioritized dynamic weaknesses reduced/removed.
 - Remediations consistent with the architecture and linked to code/config.
 - Reproducible evidence (Postman collection, environment, ZAP notes, CI artifacts).
 
-### Challenges Encountered & Solutions
+![Placeholder: Newman / ZAP report screenshot](images/newman-zap.png)
+
+---
+
+## Lab 3 — Challenges Encountered & Solutions
 
 | Challenge | Solution |
 |---|---|
@@ -307,9 +412,9 @@ same-account rejection, and negative-balance rejection.
 
 ---
 
-## Lab 4 — Container & Dependency Security
+# Lab 4 — Container & Dependency Security
 
-### Complete Description
+## Complete Description
 
 Lab 4 shifts focus from the code and running app to the **software supply chain** — the third-party
 libraries, the Docker image, configuration files, and the CI/CD pipeline. A program can be perfectly
@@ -319,7 +424,11 @@ leaked secret, or no automated checks.
 The workshop detects, analyzes, prioritizes, remediates, and **automates** security risks related to
 containers and dependencies.
 
-### Learning Objectives
+![Placeholder: Container / supply chain illustration](images/container-security.png)
+
+---
+
+## Lab 4 — Learning Objectives
 
 - **A4.1** — Explain security risks of container images and third-party libraries.
 - **A4.2** — Identify files/artifacts/configurations involved in containerized build/execution.
@@ -330,25 +439,35 @@ containers and dependencies.
 - **A4.7** — Implement a CI/CD pipeline to replay dependency and container checks.
 - **A4.8** — Produce technical deliverables with analysis, corrections, and evidence.
 
-### Tools Used
+---
 
-- **OWASP Dependency-Check** — Maven dependency vulnerability scan (CVSS ≥ 7 gate).
-- **Trivy** — Docker image scan (vulnerabilities, secrets, misconfigurations).
-- **Docker / Docker Compose** — build and run the containerized artifact.
-- **GitHub Actions** — automate the checks.
-- **Dependabot** — weekly automated dependency updates.
+## Lab 4 — Tools Used
 
-### Steps Involved
+| Tool | Purpose |
+|---|---|
+| **OWASP Dependency-Check** | Maven dependency vulnerability scan (CVSS ≥ 7 gate) |
+| **Trivy** | Docker image scan (vulnerabilities, secrets, misconfigurations) |
+| **Docker / Docker Compose** | Build and run the containerized artifact |
+| **GitHub Actions** | Automate the checks |
+| **Dependabot** | Weekly automated dependency updates |
+
+![Placeholder: Trivy scan output screenshot](images/trivy.png)
+
+---
+
+## Lab 4 — Steps Involved
 
 1. **Prepare the environment** — verify the build, Dockerfile, `.dockerignore`,
    `docker-compose.yml`, and parent POM.
 2. **Identify vulnerabilities** — review Maven dependencies (Dependency-Check + `dependency:tree`),
    the Dockerfile/image (size, layers, base image), secrets, and privileges.
-3. **Remediate** — see below.
+3. **Remediate** — see next slide.
 4. **Automate** — add the container & dependency security pipeline.
 5. **Final validation** — rerun build, tests, Dependency-Check, Docker build, and Trivy.
 
-### Remediations Implemented
+---
+
+## Lab 4 — Remediations Implemented
 
 - **Overly large / overexposed Docker image** — multi-stage Dockerfile: a Maven build stage produces
   the jar, and a slim `eclipse-temurin:17-jre-alpine` runtime stage copies only the runnable
@@ -365,7 +484,11 @@ containers and dependencies.
 - **Verification discipline** — a local script (`container-security/scripts/verify-workshop4.sh`)
   replays the full sequence.
 
-### Expected Results
+![Placeholder: Docker image size comparison (254MB vs 754MB)](images/image-size.png)
+
+---
+
+## Lab 4 — Expected Results
 
 - A passing build and test suite (no functional regressions).
 - Reduced/justified dependency findings (Dependency-Check report).
@@ -374,7 +497,9 @@ containers and dependencies.
 - A CI pipeline that rebuilds, scans dependencies, builds the image, scans it with Trivy, and
   publishes reports as artifacts.
 
-### Challenges Encountered & Solutions
+---
+
+## Lab 4 — Challenges Encountered & Solutions
 
 | Challenge | Solution |
 |---|---|
@@ -386,7 +511,7 @@ containers and dependencies.
 
 ---
 
-## The Complete DevSecOps Pipeline
+# The Complete DevSecOps Pipeline
 
 The repository contains **three** GitHub Actions workflows that together industrialize security:
 
@@ -398,6 +523,50 @@ The repository contains **three** GitHub Actions workflows that together industr
 
 **Dependabot** monitors Maven and GitHub Actions dependencies weekly, keeping the supply chain
 up-to-date.
+
+![Placeholder: CI/CD pipeline diagram](images/pipeline.png)
+
+---
+
+## CI Workflow (`ci.yml`) — Jobs
+
+| Job | What it does |
+|---|---|
+| `verify` | `mvn -B clean verify` (build + unit + integration + Cucumber) |
+| `static-analysis` | SpotBugs + Find Security Bugs (`spotbugs:check`), uploads reports |
+| `pmd` | Aggregate PMD quality gate (priority 1–3, zero violations), uploads reports |
+| `dependency-analysis` | OWASP Dependency-Check (CVSS ≥ 7 gate), uploads report |
+| `mutation-testing` | PITest mutation coverage, uploads reports |
+| `filesystem-security-scan` | Trivy fs scan (vuln, secret, misconfig) |
+| `container-security-scan` | Build image + Trivy image scan |
+| `compose-smoke-test` | Docker Compose up, health check, OpenAPI check, transfer workflow |
+
+---
+
+## DAST Workflow (`digibank-dast.yml`) — Two Levels
+
+- **Level 1 — Newman (blocking):** starts PostgreSQL + DigiBank (`ci` profile, Swagger disabled),
+  waits for health, replays the DAST Postman collection, uploads Newman reports + app log.
+- **Level 2 — ZAP (observation, non-blocking):** runs the stack via Docker Compose and launches an
+  OWASP ZAP baseline scan; results are published as evidence without blocking the pipeline.
+
+```bash
+newman run dast/postman/DigiBank-DAST-Validation.postman_collection.json \
+  -e dast/postman/DigiBank-local.postman_environment.json \
+  --reporters cli,html,json
+```
+
+---
+
+## Container & Dependency Security Pipeline (`digibank-security-pipeline.yml`)
+
+1. Build and test DigiBank (`mvn -B clean verify`).
+2. Export the dependency tree (`mvn dependency:tree`).
+3. Run OWASP Dependency-Check (NVD API key from GitHub secrets).
+4. Build the Docker image.
+5. Export image metadata (`docker image inspect`, `docker history`).
+6. Run Trivy on the image (HIGH/CRITICAL, exit-code 1).
+7. Publish the dependency-check report, dependency tree, and image metadata as artifacts.
 
 ---
 
@@ -424,3 +593,15 @@ lifecycle — from the first line of code to the container image and the CI/CD p
 **Key takeaway:** A secure application is not just well-written code. It is code that is statically
 and dynamically validated, built from trusted dependencies, shipped in a hardened container, and
 continuously re-checked by an automated pipeline.
+
+---
+
+## Thank You — Questions?
+
+**DigiBank — Introduction to Security in DevOps (UCC152-2)**
+
+- 4 labs, 1 codebase, 1 automated pipeline
+- SAST + DAST + Container/Dependency security
+- Shift Left, end to end
+
+![Placeholder: Closing / thank-you image](images/thank-you.png)

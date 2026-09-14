@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSecOps Curriculum - DigiBank</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-purple: #bc8cff;
+            --accent-orange: #d29922;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 620px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .slide-header h2 {
+            font-size: 1.8rem;
+            color: var(--accent-blue);
+        }
+
+        .slide-header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .slide-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        ul.content-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        ul.content-list li {
+            position: relative;
+            padding-left: 25px;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        ul.content-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .card h3 {
+            color: var(--accent-orange);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .team-member {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background-color: var(--border-color);
+            color: var(--text-main);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        .title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            font-size: 2.3rem;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .title-slide h3 {
+            font-size: 1.3rem;
+            color: var(--accent-green);
+            margin-bottom: 25px;
+        }
+
+        .meta-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-container">
+
+    <!-- Slide 1 -->
+    <div class="slide active title-slide">
+        <h1>Introduction to Security in DevOps (UCC 152-2)[cite: 1]</h1>
+        <h3>Practical DevSecOps Implementation with DigiBank[cite: 1]</h3>
+        <div class="meta-box">
+            <p><strong>Instructor:</strong> Engineer Willy Damtchou[cite: 1]</p>
+            <p><strong>Institution:</strong> Université des Montagnes / Centre d'Enseignement Virtuel[cite: 1]</p>
+            <hr style="border-color: var(--border-color); margin: 15px 0;">
+            <p style="margin-bottom: 8px; color: var(--accent-orange);"><strong>Presented By (Team Members):</strong></p>
+            <div class="team-grid">
+                <div class="team-member">Tchikaya Ariel</div>
+                <div class="team-member">Nancy Muyeh</div>
+                <div class="team-member">Nkwa Jude</div>
+                <div class="team-member">Bryan Dino</div>
+                <div class="team-member">Fuh Valentine</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Program Roadmap & Objectives</h2>
+            <p>End-to-end security integration across the software development lifecycle[cite: 1].</p>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Workshop 1</h3>
+                    <p>Secure Design & Architecture Implementation[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Workshop 2</h3>
+                    <p>Static Security Analysis (SAST) & Code Quality[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Workshop 3</h3>
+                    <p>Dynamic Security Analysis (DAST) & Dynamic Scans[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Workshop 4</h3>
+                    <p>Securing Containers, Supply Chain & Artifacts[cite: 1].</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 1 – Architectural Principles</h2>
+            <p>DigiBank Core Banking Application Foundations[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Application Focus:</span> Core banking system engineered with Java 17 and Spring Boot 3[cite: 1].</li>
+                <li><span class="highlight">Architecture:</span> Modular monolithic structure for clear domain isolation[cite: 1].</li>
+                <li><span class="highlight">API Layer:</span> RESTful endpoints exposing customers, accounts, transactions, and payments[cite: 1].</li>
+                <li><span class="highlight">Persistence:</span> PostgreSQL database managed via Spring Data JPA and Hibernate[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 1 – Implementation Goals</h2>
+            <p>Establishing secure baseline application structure[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Setup parent Maven project structured into clear business modules (common, domain, repository, service, web, security)[cite: 1].</li>
+                <li>Implement core layers with strict Bean Validation constraints[cite: 1].</li>
+                <li>Configure OpenAPI/Swagger index for live interactive API documentation[cite: 1].</li>
+                <li>Establish unit tests with JUnit 5 and business feature scenarios using Cucumber BDD[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 1 – Complete Solution Architecture</h2>
+            <p>Multi-layered application flow and built-in controls[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Clients & Entry</h3>
+                    <p>Web & Mobile clients connect via HTTPS/JSON[cite: 1]. Entry via REST Controllers with Global Exception Handling and CORS[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Core Domains</h3>
+                    <p>Customer, Account, Transaction, Payment, and Auth management modules[cite: 1].</p>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 10px;">
+                <h3>Built-in Security Mechanics</h3>
+                <p>Stateless JWT authentication, BCrypt password hashing, RBAC authorization, Method Security, and input sanitization[cite: 1].</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – Static Security Analysis (SAST)</h2>
+            <p>Shifting security left in development[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Shift-Left Concept:</span> Identifying and remediating code vulnerabilities early in the lifecycle[cite: 1].</li>
+                <li><span class="highlight">Core Objective:</span> Scan source code to track faults and third-party dependency vulnerabilities prior to compilation[cite: 1].</li>
+                <li><span class="highlight">Pipeline Focus:</span> Distinguishing true risks from false positives and enforcing Quality Gates[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – SAST Objectives & Goals</h2>
+            <p>Automation targets for static inspection[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Automate static code scanning using SonarQube[cite: 1].</li>
+                <li>Detect known CVEs in external dependencies with OWASP Dependency-Check[cite: 1].</li>
+                <li>Prevent credential leaks in Git history using Gitleaks[cite: 1].</li>
+                <li>Enforce Quality Gates to automatically fail builds on security debt or low coverage[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – Tool: SonarQube</h2>
+            <p>Continuous code quality and security management[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Evaluates code quality, code smells, and security vulnerabilities continuously[cite: 1].</li>
+                <li>Scans for static bugs, security hotspots, code duplication, and coverage metrics[cite: 1].</li>
+                <li>Acts as the ultimate CI pipeline gatekeeper via enforceable Quality Policies[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – Tool: OWASP Dependency-Check</h2>
+            <p>Software composition analysis[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Identifies public vulnerabilities (CVEs) in open-source third-party dependencies[cite: 1].</li>
+                <li>Queries the National Vulnerability Database (NVD) and CVE sources continuously[cite: 1].</li>
+                <li>Calculates CVSS threat scores and generates actionable library update reports[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – Tools: Gitleaks & SpotBugs</h2>
+            <p>Secret scanning and bytecode inspection[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Gitleaks</h3>
+                    <p>Scans repository history and active commits to catch hardcoded API keys, passwords, and secrets[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>SpotBugs</h3>
+                    <p>Performs bytecode static analysis to spot null pointer risks, concurrency issues, and Java security flaws[cite: 1].</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 11 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – PMD, Checkstyle & JaCoCo</h2>
+            <p>Code hygiene and coverage metrics[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">PMD:</span> Detects high cyclomatic complexity, unused variables, and bloated methods[cite: 1].</li>
+                <li><span class="highlight">Checkstyle:</span> Enforces enterprise code formatting, naming rules, and Javadoc standards[cite: 1].</li>
+                <li><span class="highlight">JaCoCo:</span> Measures exact line, branch, and instruction test coverage[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 12 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – Mutation & BDD Testing</h2>
+            <p>Verifying test quality and behavior[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">PITest Mutation Testing:</span> Injects fault mutations to test the true effectiveness of unit test suites[cite: 1].</li>
+                <li><span class="highlight">Mutation Score:</span> Ranks test strength based on killed vs. surviving code mutations[cite: 1].</li>
+                <li><span class="highlight">Cucumber BDD:</span> Validates business-readable scenarios directly against live feature code[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 13 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 2 – SAST CI/CD Architecture</h2>
+            <p>Automated static scanning pipeline[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Trigger:</span> Code push or PR activates GitHub Actions workflow[cite: 1].</li>
+                <li><span class="highlight">Parallel Scans:</span> Concurrent execution of Gitleaks, SpotBugs, PMD, Checkstyle, and Dependency-Check[cite: 1].</li>
+                <li><span class="highlight">Quality Gate:</span> SonarQube verifies policies; build fails instantly if criteria are breached[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 14 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 3 – Dynamic Security Analysis (DAST)</h2>
+            <p>Runtime security verification[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Runtime Inspection:</span> Analyzing application state while actively running in a containerized environment[cite: 1].</li>
+                <li><span class="highlight">Black-Box Perspective:</span> Simulating real-world attacker behaviors against exposed REST APIs[cite: 1].</li>
+                <li><span class="highlight">Value Addition:</span> Tests dynamic state, live auth flows, and runtime headers unreachable via SAST[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 15 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 3 – DAST Execution Goals</h2>
+            <p>Dynamic scan targets[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Design API test suites tailored for security assertions using Newman/Postman[cite: 1].</li>
+                <li>Execute automated dynamic vulnerability scans using OWASP ZAP[cite: 1].</li>
+                <li>Validate session tokens, RBAC rules, rate limits, and authentication flows[cite: 1].</li>
+                <li>Catch input validation failures, verbose stack traces, and unhandled status codes[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 16 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 3 – OWASP ZAP & Newman</h2>
+            <p>Dynamic scanners and test execution[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>OWASP ZAP</h3>
+                    <p>Runs passive and active scans against dynamic endpoints to uncover OWASP Top 10 risks[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Newman (Postman)</h3>
+                    <p>Automates API collection suites to verify business logic rules, authorization, and response codes[cite: 1].</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 17 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 3 – Unified Pipeline Architecture</h2>
+            <p>Combining SAST and DAST in CI/CD[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Build & SAST:</span> Maven compilation, unit tests, static code analysis, and quality gate approval[cite: 1].</li>
+                <li><span class="highlight">Deployment:</span> Spinning up an ephemeral DigiBank runtime instance using Docker Compose[cite: 1].</li>
+                <li><span class="highlight">DAST Stage:</span> OWASP ZAP spidering and active scanning combined with Newman test runs[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 18 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 4 – Securing Containers</h2>
+            <p>Infrastructure and supply chain security[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Supply Chain Shift:</span> Securing infrastructure blueprints, dependencies, and built artifacts[cite: 1].</li>
+                <li><span class="highlight">Container Hardening:</span> Removing unnecessary utilities to minimize the base image attack surface[cite: 1].</li>
+                <li><span class="highlight">Artifact Auditing:</span> Verifying OS-level libraries, base images, and runtime configurations[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 19 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 4 – Container Objectives</h2>
+            <p>Artifact protection goals[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Scan Dockerfiles and base image layers for OS vulnerabilities[cite: 1].</li>
+                <li>Integrate Trivy for unified container, secret, and misconfiguration analysis[cite: 1].</li>
+                <li>Generate a Software Bill of Materials (SBOM) for compliance and tracking[cite: 1].</li>
+                <li>Establish secure secret injection patterns for runtime environments[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 20 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 4 – Tool: Trivy</h2>
+            <p>Comprehensive security scanner[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Vulnerabilities & Configs</h3>
+                    <p>Scans base OS packages and Infrastructure as Code (IaC) misconfigurations[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Secrets & SBOM</h3>
+                    <p>Detects baked-in secrets and generates complete Software Bill of Materials reports[cite: 1].</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 21 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 4 – Container Flow Architecture</h2>
+            <p>Build and analysis flow[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Commit & Package:</span> Source push triggers build -> Minimal Docker image created[cite: 1].</li>
+                <li><span class="highlight">Trivy Interception:</span> Image is scanned for CVEs, secrets, and misconfigurations before release[cite: 1].</li>
+                <li><span class="highlight">Registry Push:</span> Only passed images are published to container registries[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 22 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Workshop 4 – Full CI/CD Pipeline Steps</h2>
+            <p>10-step secure pipeline[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>1-4: Code Push → GitHub Actions → Maven Build → Unit & BDD Tests[cite: 1].</li>
+                <li>5-6: SAST Inspection → Docker Image Packaging[cite: 1].</li>
+                <li>7-10: Trivy Scan → Quality Gate Approval → Registry Push → Deployment[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 23 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Complete DevSecOps Pipeline Summary</h2>
+            <p>End-to-end lifecycle defense[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Code & Build</h3>
+                    <p>Gitleaks, SonarQube, SpotBugs, Dependency-Check, JaCoCo, PITest[cite: 1].</p>
+                </div>
+                <div class="card">
+                    <h3>Package & Runtime</h3>
+                    <p>Trivy Image Scan, Ephemeral Containers, OWASP ZAP DAST, Gated Release[cite: 1].</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 24 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Tooling Matrix Across Course</h2>
+            <p>Technology stack overview[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li><span class="highlight">Static Analysis:</span> SonarQube, SpotBugs, PMD, Checkstyle, Gitleaks, OWASP Dependency-Check[cite: 1].</li>
+                <li><span class="highlight">Testing & Quality:</span> JUnit 5, Mockito, Cucumber, JaCoCo, PITest[cite: 1].</li>
+                <li><span class="highlight">Dynamic & Container:</span> OWASP ZAP, Postman/Newman, Docker, Trivy, GitHub Actions[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 25 -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>Expected Technical Deliverables</h2>
+            <p>Core course output[cite: 1]</p>
+        </div>
+        <div class="slide-body">
+            <ul class="content-list">
+                <li>Modular DigiBank Spring Boot backend application[cite: 1].</li>
+                <li>Complete GitHub Actions workflow configurations (`.github/workflows`)[cite: 1].</li>
+                <li>Integrated Security Dashboards (SonarQube, ZAP, Trivy reports)[cite: 1].</li>
+                <li>Documented vulnerability remediation audits[cite: 1].</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 26 -->
+    <div class="slide title-slide">
+        <h1>Conclusion & Q&A[cite: 1]</h1>
+        <p style="margin-top: 15px; font-size: 1.1rem; max-width: 700px;">
+            Integrating security into every stage of the CI/CD pipeline ensures early vulnerability detection, mitigates deployment risks, and speeds up secure delivery[cite: 1].
+        </p>
+        <div style="margin-top: 30px;">
+            <p><strong>Thank you for your attention![cite: 1]</strong></p>
+            <p style="color: var(--text-muted); margin-top: 10px;">Questions & Answers</p>
+        </div>
+    </div>
+
+    <!-- Footer Controls -->
+    <div class="footer">
+        <span id="slide-number">Slide 1 of 26</span>
+        <div class="controls">
+            <button onclick="prevSlide()">Previous</button>
+            <button onclick="nextSlide()">Next</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const slideNumberText = document.getElementById('slide-number');
+
+    function updateSlide() {
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === currentSlide);
+        });
+        slideNumberText.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+    }
+
+    function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updateSlide();
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 0) {
+            currentSlide--;
+            updateSlide();
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+            prevSlide();
+        }
+    });
+</script>
+
+</body>
+</html>
