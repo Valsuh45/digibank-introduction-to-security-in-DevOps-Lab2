@@ -1,0 +1,16 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e6]:
+    - generic [ref=f2e7]: UCC 152‑2 · Introduction to Security in DevOps
+    - heading "DigiBank" [level=1] [ref=f2e10]
+    - generic [ref=f2e11]: Complete workshop presentation — Labs 1 through 4
+    - generic [ref=f2e12]: Modular monolith · Spring Boot 3.5 · Java 17 · PostgreSQL · Maven multi‑module
+    - generic [ref=f2e13]:
+      - generic [ref=f2e14]: Tchikaya Ariel
+      - generic [ref=f2e15]: Nancy Muyeh
+      - generic [ref=f2e16]: Nkwa Jude
+      - generic [ref=f2e17]: Bryan Dino
+      - generic [ref=f2e18]: Fuh Valentine
+  - generic:
+    - generic: DigiBank · UCC152‑2
+    - generic: 01 / 46
+  - generic [ref=f2e20] [cursor=pointer]

@@ -1,0 +1,25 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - heading "Introduction to Security in DevOps" [level=1] [ref=e4]
+    - heading "Practical DevSecOps Implementation with DigiBank" [level=3] [ref=e5]
+    - generic [ref=e6]:
+      - paragraph [ref=e7]:
+        - strong [ref=e8]: "Instructor:"
+        - text: Engineer Willy Damtchou
+      - paragraph [ref=e9]:
+        - strong [ref=e10]: "Institution:"
+        - text: Université des Montagnes / Centre d'Enseignement Virtuel
+      - separator [ref=e11]
+      - paragraph [ref=e12]:
+        - strong [ref=e13]: "Presented By:"
+      - generic [ref=e14]:
+        - generic [ref=e15]: Tchikaya Ariel
+        - generic [ref=e16]: Nancy Muyeh
+        - generic [ref=e17]: Nkwa Jude
+        - generic [ref=e18]: Bryan Dino
+        - generic [ref=e19]: Fuh Valentine
+  - generic [ref=e20]:
+    - generic [ref=e21]: Slide 1 of 21
+    - generic [ref=e22]:
+      - button "Previous" [ref=e23] [cursor=pointer]
+      - button "Next" [ref=e24] [cursor=pointer]

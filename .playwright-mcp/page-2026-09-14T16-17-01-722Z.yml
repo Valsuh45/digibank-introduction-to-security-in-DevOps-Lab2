@@ -1,0 +1,8 @@
+- main [ref=f2e2]:
+  - heading "DigiBank" [level=1] [ref=f2e3]
+  - paragraph [ref=f2e4]: Workshop banking APIs for customers, accounts, and secure transfers.
+  - navigation "API resources" [ref=f2e5]:
+    - link "Swagger UI" [ref=f2e6] [cursor=pointer]:
+      - /url: /swagger-ui/index.html
+    - link "OpenAPI JSON" [ref=f2e7] [cursor=pointer]:
+      - /url: /v3/api-docs
