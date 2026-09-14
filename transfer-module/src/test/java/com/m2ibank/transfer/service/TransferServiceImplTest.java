@@ -282,6 +282,65 @@ class TransferServiceImplTest {
         verifyNoInteractions(transferRepository);
     }
 
+    @Test
+    void malformedHistoryQueriesNeverReachRepositories() {
+        for (String number : java.util.Arrays.asList(null, " ", "ACC-001", "000000000001")) {
+            assertThatThrownBy(() -> service.getAccountTransactionHistory(number))
+                    .isInstanceOf(InvalidOperationException.class);
+        }
+        verifyNoInteractions(accountRepository, transferRepository);
+    }
+
+    @Test
+    void invalidTransferIdentifiersNeverReachRepository() {
+        for (Long id : java.util.Arrays.asList(null, 0L, -1L)) {
+            assertThatThrownBy(() -> service.getTransferById(id)).isInstanceOf(ResourceNotFoundException.class);
+        }
+        verifyNoInteractions(transferRepository);
+    }
+
+    @Test
+    void storedTransferLookupPreservesEveryPublicAuditField() {
+        Transfer stored = Transfer.success("TRF-LOOKUP", "111111111111", "222222222222",
+                new BigDecimal("25.00"), Instant.parse("2026-09-02T10:15:30Z"), "Rent");
+        ReflectionTestUtils.setField(stored, "id", 1L);
+        when(transferRepository.findById(1L)).thenReturn(Optional.of(stored));
+        assertThat(service.getTransferById(1L)).isEqualTo(new TransferResponseDto(1L,
+                "TRF-LOOKUP", "111111111111", "222222222222", new BigDecimal("25.00"),
+                TransferStatus.SUCCESS, stored.getExecutionDate(), "Rent"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("validDescriptions")
+    void descriptionNormalizationPreservesMeaning(String input, String expected) {
+        when(accountRepository.findByAccountNumber("111111111111"))
+                .thenReturn(Optional.of(account("111111111111", "100.00")));
+        when(accountRepository.findByAccountNumber("222222222222"))
+                .thenReturn(Optional.of(account("222222222222", "0.00")));
+        when(transferRepository.save(any(Transfer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        TransferResponseDto response = service.executeTransfer(new TransferRequestDto(
+                "111111111111", "222222222222", BigDecimal.ONE, input));
+        assertThat(response.description()).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> validDescriptions() {
+        return Stream.of(Arguments.of(null, null), Arguments.of("   ", null),
+                Arguments.of("  Rent  ", "Rent"), Arguments.of("x".repeat(255), "x".repeat(255)));
+    }
+
+    @Test
+    void maximumSupportedAmountCanBeTransferredExactly() {
+        BankAccount source = account("111111111111", "99999999999999999.99");
+        BankAccount target = account("222222222222", "0.00");
+        when(accountRepository.findByAccountNumber(source.getAccountNumber())).thenReturn(Optional.of(source));
+        when(accountRepository.findByAccountNumber(target.getAccountNumber())).thenReturn(Optional.of(target));
+        when(transferRepository.save(any(Transfer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        TransferResponseDto response = service.executeTransfer(request("99999999999999999.99"));
+        assertThat(response.amount()).isEqualByComparingTo("99999999999999999.99");
+        assertThat(source.getBalance()).isEqualByComparingTo("0.00");
+        assertThat(target.getBalance()).isEqualByComparingTo("99999999999999999.99");
+    }
+
     private TransferRequestDto request(String amount) {
         return new TransferRequestDto(
                 "111111111111", "222222222222", new BigDecimal(amount), "Rent");

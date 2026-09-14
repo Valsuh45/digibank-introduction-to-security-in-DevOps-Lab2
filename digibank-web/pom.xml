@@ -103,6 +103,20 @@
 
     <build>
         <plugins>
+            <!-- The assembly depends on every module. Include its integration execution data
+                 so domain coverage is not limited to tests in each domain module. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>reactor-coverage-report</id>
+                        <phase>verify</phase>
+                        <goals><goal>report-aggregate</goal></goals>
+                        <configuration><includeCurrentProject>true</includeCurrentProject></configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

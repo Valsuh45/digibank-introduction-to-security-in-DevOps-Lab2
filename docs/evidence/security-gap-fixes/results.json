@@ -1,0 +1,200 @@
+{
+  "recordedAt": "2026-09-14T07:27:28.478197+00:00",
+  "branch": "fix/workshop-security-gaps",
+  "baseMain": "56de99e",
+  "workshop1": "7428f0e",
+  "workshop4": "06866a9",
+  "integrationCommit": "f6b015d",
+  "sourceIdentity": "source-sha256.txt (includes uncommitted reviewed fixes at verification time)",
+  "maven": {
+    "command": "mvn -B install pmd:aggregate-pmd-check spotbugs:check",
+    "exitCode": 0,
+    "surefire": {
+      "tests": 104,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "checkstyle": "pass",
+    "pmd": "pass",
+    "spotbugsFindSecBugs": "pass",
+    "jacocoServiceCounters": {
+      "com/m2ibank/customer/service/CustomerServiceImpl": {
+        "BRANCH": {
+          "missed": 0,
+          "covered": 4
+        },
+        "LINE": {
+          "missed": 3,
+          "covered": 32
+        }
+      },
+      "com/m2ibank/transfer/service/TransferServiceImpl": {
+        "BRANCH": {
+          "missed": 1,
+          "covered": 49
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 86
+        }
+      },
+      "com/m2ibank/account/service/BankAccountServiceImpl": {
+        "BRANCH": {
+          "missed": 0,
+          "covered": 28
+        },
+        "LINE": {
+          "missed": 0,
+          "covered": 55
+        }
+      }
+    },
+    "aggregateModules": [
+      "digibank-web",
+      "transfer-module",
+      "common-module",
+      "customer-module",
+      "account-module"
+    ]
+  },
+  "pit": {
+    "command": "mvn -B -pl customer-module,account-module,transfer-module org.pitest:pitest-maven:mutationCoverage",
+    "exitCode": 0,
+    "scope": "handwritten business services, default mutation operators, same-module tests",
+    "thresholds": {
+      "mutationPercent": 80,
+      "lineCoveragePercent": 90
+    },
+    "statuses": {
+      "customer-module": {
+        "KILLED": 10
+      },
+      "transfer-module": {
+        "KILLED": 51
+      },
+      "account-module": {
+        "KILLED": 33
+      }
+    },
+    "initialTransferStatuses": {
+      "KILLED": 43,
+      "SURVIVED": 7,
+      "NO_COVERAGE": 1
+    }
+  },
+  "newman": {
+    "version": "6.2.1",
+    "htmlReporter": "newman-reporter-htmlextra@1.23.1",
+    "profile": "ci",
+    "stats": {
+      "iterations": {
+        "total": 1,
+        "pending": 0,
+        "failed": 0
+      },
+      "items": {
+        "total": 82,
+        "pending": 0,
+        "failed": 0
+      },
+      "scripts": {
+        "total": 85,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequests": {
+        "total": 82,
+        "pending": 0,
+        "failed": 0
+      },
+      "requests": {
+        "total": 82,
+        "pending": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 82,
+        "pending": 0,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 134,
+        "pending": 0,
+        "failed": 0
+      },
+      "testScripts": {
+        "total": 84,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequestScripts": {
+        "total": 1,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    "failureCount": 0
+  },
+  "workshop1Http": {
+    "passed": true,
+    "requestCount": 57,
+    "profile": "dev",
+    "details": "http.json"
+  },
+  "persistence": {
+    "resourcesCompared": 7,
+    "identicalAfterRestart": true
+  },
+  "image": {
+    "id": "sha256:873078263f7a88be4b95af45bd6a00c9d873986b27c5ea1323479120d1dda275",
+    "user": "digibank",
+    "trivyVersion": "0.69.3",
+    "scanType": "image input archive",
+    "filters": {
+      "severity": [
+        "HIGH",
+        "CRITICAL"
+      ],
+      "ignoreUnfixed": true,
+      "scanners": [
+        "vuln"
+      ]
+    },
+    "findings": 0,
+    "exitCode": 0
+  },
+  "gitleaks": {
+    "version": "8.24.3",
+    "currentSourceFindings": 0,
+    "historyFindings": 2,
+    "historyRemediation": "Owner must rotate; no history rewrite or suppression performed",
+    "syntheticNvdRuleProbe": {
+      "exitCode": 1,
+      "findingCount": 1,
+      "secretRedacted": true
+    }
+  },
+  "dependencyCheck": {
+    "version": "12.1.0",
+    "missingDatabaseProbe": {
+      "autoUpdate": false,
+      "exitCode": 1,
+      "error": "NoDataException: Autoupdate is disabled and the database does not exist"
+    },
+    "suppressionSchemaValidation": "passed using 12.1.0 bundled 1.3 XSD",
+    "liveScan": "not run; rotated NVD credential required"
+  },
+  "actionlint": {
+    "version": "1.7.7",
+    "exitCode": 0
+  },
+  "sonarqube": "workflow configured; external server/token/project settings absent; not run",
+  "independentReview": {
+    "initialFindings": 2,
+    "resolved": 2,
+    "remainingActionableFindings": 0
+  },
+  "hostedCi": "not run on this local branch",
+  "secretRotation": "requires NVD key owner"
+}

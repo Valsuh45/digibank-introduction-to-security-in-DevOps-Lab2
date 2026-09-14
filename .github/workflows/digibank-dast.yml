@@ -96,7 +96,7 @@ jobs:
           node-version: 20
 
       - name: Install Newman
-        run: npm install -g newman newman-reporter-html
+        run: npm install -g newman@6.2.1 newman-reporter-htmlextra@1.23.1
 
       - name: Run Newman DAST suite
         run: |
@@ -104,17 +104,24 @@ jobs:
           newman run dast/postman/DigiBank-DAST-Validation.postman_collection.json \
             -e dast/postman/DigiBank-local.postman_environment.json \
             --env-var baseUrl=http://localhost:8080 \
-            --reporters cli,html,json \
-            --reporter-html-export dast/reports/newman-report.html \
+            --bail --reporters cli,htmlextra,json \
+            --reporter-htmlextra-export dast/reports/newman-report.html \
             --reporter-json-export dast/reports/newman-report.json
+
+      - name: Require both Newman reports
+        run: |
+          test -s dast/reports/newman-report.html
+          test -s dast/reports/newman-report.json
 
       - name: Upload Newman reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: newman-dast-reports
-          path: dast/reports/
-          if-no-files-found: warn
+          path: |
+            dast/reports/newman-report.html
+            dast/reports/newman-report.json
+          if-no-files-found: error
 
       - name: Upload application log
         if: always()

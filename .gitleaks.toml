@@ -1,0 +1,14 @@
+title = "DigiBank source secret scan"
+[extend]
+useDefault = true
+
+[[rules]]
+id = "nvd-api-key"
+description = "Literal NVD API key (UUID) in configuration"
+regex = '''(?i)nvd[_-]?api[_-]?key[\s:="']+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'''
+secretGroup = 1
+keywords = ["nvd"]
+
+[allowlist]
+description = "Generated build output and binary course material, not application source"
+paths = ['''(^|/)target/''', '''(^|/)\.git/''', '''\.(pdf|png)$''']

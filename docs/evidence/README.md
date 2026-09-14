@@ -48,3 +48,7 @@ The PDF's submission captures still need an IDE project-tree screenshot and any 
 Explain a transfer from request validation through the service and repository transaction to database constraints and response mapping. Explain why a rejected request must leave both balances and history unchanged, and why successful H2 tests still need PostgreSQL execution. Explain why validation does not provide authentication or account ownership controls: those controls are absent in this educational version.
 
 Advanced SAST/DAST campaigns, production authentication, concurrent-transfer locking, registry publication, and deployment hardening are separate follow-ups. They do not replace Workshop 1's functional and execution proof.
+
+## Integrated security fix verification
+
+See [security-gap fixes](security-gap-fixes.md) for refreshed results on the combined Workshop 1–4 tree. The Workshop 1 snapshots above remain historical and are not a claim about the combined revision.

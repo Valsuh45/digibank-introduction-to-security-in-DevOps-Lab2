@@ -1,5 +1,7 @@
 # DigiBank workshop assessment and learning roadmap
 
+> Historical gap assessment: subsequent fixes and current external blockers are tracked in [security-gap verification](../evidence/security-gap-fixes.md). Do not treat the pending items below as the current completion status.
+
 > Historical assessment: Workshop 1 implementation and verification work continued after this review. See [the current evidence index](../evidence/README.md) before treating the Workshop 1 findings below as still open.
 
 Assessment date: 11 September 2026. Reviewed local `main` at `84048ed60105c0f852f2abdca3bd10b540a39ea5`.

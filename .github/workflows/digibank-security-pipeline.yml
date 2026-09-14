@@ -41,7 +41,7 @@ jobs:
           cache: maven
 
       - name: Build and test DigiBank
-        run: mvn -B clean verify
+        run: mvn -B clean install
 
       - name: Export dependency tree
         run: mvn -B dependency:tree > dependency-tree.txt
@@ -49,7 +49,9 @@ jobs:
       - name: Run OWASP Dependency-Check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn -B org.owasp:dependency-check-maven:check
+        run: |
+          test -n "$NVD_API_KEY" || { echo "Configure the rotated NVD_API_KEY repository secret"; exit 1; }
+          mvn -B org.owasp:dependency-check-maven:aggregate
 
       - name: Build Docker image
         run: docker build -t digibank:ci .
@@ -64,6 +66,7 @@ jobs:
         with:
           image-ref: digibank:ci
           format: table
+          output: target/trivy-image.txt
           severity: HIGH,CRITICAL
           exit-code: "1"
           ignore-unfixed: true
@@ -74,7 +77,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: target/dependency-check-report.html
+          path: |
+            target/dependency-check-report.html
+            target/dependency-check-report.json
+          if-no-files-found: warn
+
+      - name: Upload Trivy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-image-report
+          path: target/trivy-image.txt
           if-no-files-found: warn
 
       - name: Upload dependency tree

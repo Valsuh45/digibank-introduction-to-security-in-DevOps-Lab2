@@ -12,6 +12,16 @@
           "name": "Create customer - valid payload",
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('runId', pm.variables.replaceIn('{{$guid}}'));",
+                  "['customerId', 'customer2Id', 'sourceAccountNumber', 'targetAccountNumber', 'transferId'].forEach(key => { pm.environment.unset(key); pm.collectionVariables.unset(key); });"
+                ]
+              }
+            },
+            {
               "listen": "test",
               "script": {
                 "exec": [
@@ -34,16 +44,25 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Jean\",\n    \"lastName\": \"Testeur\",\n    \"email\": \"jean.testeur@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9001\"\n}"
+              "raw": "{\n    \"firstName\": \"Jean\",\n    \"lastName\": \"Testeur\",\n    \"email\": \"jean.testeur+{{runId}}@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9001-{{runId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         },
@@ -68,16 +87,25 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Claire\",\n    \"lastName\": \"Benef\",\n    \"email\": \"claire.benef@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9002\"\n}"
+              "raw": "{\n    \"firstName\": \"Claire\",\n    \"lastName\": \"Benef\",\n    \"email\": \"claire.benef+{{runId}}@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9002-{{runId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         },
@@ -100,14 +128,29 @@
                   "});"
                 ]
               }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Every customer omits identityNumber', () => pm.response.json().data.forEach(customer => pm.expect(customer).not.to.have.property('identityNumber')));"
+                ]
+              }
             }
           ],
           "request": {
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         },
@@ -133,7 +176,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -141,8 +187,14 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/accounts",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "accounts"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts"
+              ]
             }
           }
         },
@@ -168,18 +220,123 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"customerId\": {{customerId}},\n    \"accountType\": \"SAVINGS\",\n    \"initialBalance\": 50000.00\n}"
+              "raw": "{\n    \"customerId\": {{customer2Id}},\n    \"accountType\": \"SAVINGS\",\n    \"initialBalance\": 50000.00\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/accounts",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "accounts"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts"
+              ]
             }
           }
+        },
+        {
+          "name": "Before Execute transfer - valid: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Execute transfer - valid: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Execute transfer - valid: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Execute transfer - valid: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Execute transfer - valid",
@@ -206,7 +363,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -214,10 +374,126 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
             }
           }
+        },
+        {
+          "name": "After Execute transfer - valid: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Successful transfer updates source balance exactly', () => pm.expect(data.balance).to.eql(before.balance - 2500));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Execute transfer - valid: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Exactly one successful transfer is added to history', () => {",
+                  "    pm.expect(data.length).to.eql(before.length + 1);",
+                  "    const created = data.find(row => String(row.id) === String(pm.collectionVariables.get('transferId')));",
+                  "    pm.expect(created).to.include({amount: 2500, status: 'SUCCESS', sourceAccountNumber: pm.collectionVariables.get('sourceAccountNumber'), targetAccountNumber: pm.collectionVariables.get('targetAccountNumber')});",
+                  "    pm.expect(data.filter(row => row !== created)).to.deep.eql(before);",
+                  "});",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Execute transfer - valid: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Successful transfer updates target balance exactly', () => pm.expect(data.balance).to.eql(before.balance + 2500));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Execute transfer - valid: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Exactly one successful transfer is added to history', () => {",
+                  "    pm.expect(data.length).to.eql(before.length + 1);",
+                  "    const created = data.find(row => String(row.id) === String(pm.collectionVariables.get('transferId')));",
+                  "    pm.expect(created).to.include({amount: 2500, status: 'SUCCESS', sourceAccountNumber: pm.collectionVariables.get('sourceAccountNumber'), targetAccountNumber: pm.collectionVariables.get('targetAccountNumber')});",
+                  "    pm.expect(data.filter(row => row !== created)).to.deep.eql(before);",
+                  "});",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Get transfer by id",
@@ -241,8 +517,15 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers/{{transferId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers", "{{transferId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers",
+                "{{transferId}}"
+              ]
             }
           }
         },
@@ -268,8 +551,16 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers", "account", "{{sourceAccountNumber}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers",
+                "account",
+                "{{sourceAccountNumber}}"
+              ]
             }
           }
         }
@@ -306,16 +597,25 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Invalid\",\n    \"lastName\": \"Client\",\n    \"email\": \"invalid email\",\n    \"identityNumber\": \"DB-CUST-9003\"\n}"
+              "raw": "{\n    \"firstName\": \"Invalid\",\n    \"lastName\": \"Client\",\n    \"email\": \"invalid email\",\n    \"identityNumber\": \"DB-CUST-9003-{{runId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         },
@@ -340,16 +640,25 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"\",\n    \"lastName\": \"Client\",\n    \"email\": \"blank.name@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9004\"\n}"
+              "raw": "{\n    \"firstName\": \"\",\n    \"lastName\": \"Client\",\n    \"email\": \"blank.name+{{runId}}@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9004-{{runId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         },
@@ -372,21 +681,39 @@
                   "});"
                 ]
               }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Identity field has a validation error', () => pm.expect(pm.response.json().data).to.have.property('identityNumber'));"
+                ]
+              }
             }
           ],
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Bad\",\n    \"lastName\": \"Identity\",\n    \"email\": \"bad.identity@digibank.test\",\n    \"identityNumber\": \"???\"\n}"
+              "raw": "{\n    \"firstName\": \"Bad\",\n    \"lastName\": \"Identity\",\n    \"email\": \"bad.identity+{{runId}}@digibank.test\",\n    \"identityNumber\": \"???\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         },
@@ -416,7 +743,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -424,10 +754,112 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/accounts",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "accounts"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts"
+              ]
             }
           }
+        },
+        {
+          "name": "Before Transfer - zero amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - zero amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - zero amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - zero amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Transfer - zero amount rejected",
@@ -450,7 +882,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -458,10 +893,212 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
             }
           }
+        },
+        {
+          "name": "After Transfer - zero amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Rejected transfer preserves source account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - zero amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves source history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - zero amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Rejected transfer preserves target account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - zero amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves target history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - negative amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - negative amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - negative amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - negative amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Transfer - negative amount rejected",
@@ -484,7 +1121,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -492,10 +1132,594 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
             }
           }
+        },
+        {
+          "name": "After Transfer - negative amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Rejected transfer preserves source account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - negative amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves source history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - negative amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Rejected transfer preserves target account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - negative amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves target history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - fractional-cent amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - fractional-cent amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - fractional-cent amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - fractional-cent amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Transfer - fractional-cent amount rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Negative amount is rejected', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.be.oneOf(['Request could not be processed', 'Validation failed']);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{targetAccountNumber}}\",\n    \"amount\": 0.001,\n    \"description\": \"negative amount\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "After Transfer - fractional-cent amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Rejected transfer preserves source account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - fractional-cent amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves source history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - fractional-cent amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Rejected transfer preserves target account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - fractional-cent amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves target history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - oversized amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - oversized amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - oversized amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - oversized amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Transfer - oversized amount rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('HTTP status is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Negative amount is rejected', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.message).to.be.oneOf(['Request could not be processed', 'Validation failed']);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"sourceAccountNumber\": \"{{sourceAccountNumber}}\",\n    \"targetAccountNumber\": \"{{targetAccountNumber}}\",\n    \"amount\": 100000000000000000,\n    \"description\": \"negative amount\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/transfers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
+            }
+          }
+        },
+        {
+          "name": "After Transfer - oversized amount rejected: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Rejected transfer preserves source account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - oversized amount rejected: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves source history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - oversized amount rejected: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Rejected transfer preserves target account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - oversized amount rejected: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves target history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -525,8 +1749,15 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers/99999",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers", "99999"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                "99999"
+              ]
             }
           }
         },
@@ -552,8 +1783,15 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/accounts/99999",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "accounts", "99999"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "accounts",
+                "99999"
+              ]
             }
           }
         },
@@ -579,18 +1817,123 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Jean\",\n    \"lastName\": \"Testeur\",\n    \"email\": \"jean.testeur@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9001\"\n}"
+              "raw": "{\n    \"firstName\": \"Jean\",\n    \"lastName\": \"Testeur\",\n    \"email\": \"jean.testeur+{{runId}}@digibank.test\",\n    \"identityNumber\": \"DB-CUST-9001-{{runId}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
+        },
+        {
+          "name": "Before Transfer - same source and target rejected without revealing reason: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - same source and target rejected without revealing reason: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - same source and target rejected without revealing reason: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - same source and target rejected without revealing reason: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Transfer - same source and target rejected without revealing reason",
@@ -614,7 +1957,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -622,10 +1968,212 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
             }
           }
+        },
+        {
+          "name": "After Transfer - same source and target rejected without revealing reason: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Rejected transfer preserves source account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - same source and target rejected without revealing reason: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves source history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - same source and target rejected without revealing reason: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Rejected transfer preserves target account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - same source and target rejected without revealing reason: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves target history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - insufficient balance rejected without revealing balance: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('sourceAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - insufficient balance rejected without revealing balance: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('sourceHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - insufficient balance rejected without revealing balance: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.collectionVariables.set('targetAccountBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Before Transfer - insufficient balance rejected without revealing balance: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "pm.collectionVariables.set('targetHistoryBefore', JSON.stringify(data));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "Transfer - insufficient balance rejected without revealing balance",
@@ -649,7 +2197,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -657,10 +2208,116 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/transfers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "transfers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "transfers"
+              ]
             }
           }
+        },
+        {
+          "name": "After Transfer - insufficient balance rejected without revealing balance: source account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceAccountBefore'));",
+                  "pm.test('Rejected transfer preserves source account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - insufficient balance rejected without revealing balance: source history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{sourceAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('sourceHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves source history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - insufficient balance rejected without revealing balance: target account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/accounts/number/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetAccountBefore'));",
+                  "pm.test('Rejected transfer preserves target account', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "After Transfer - insufficient balance rejected without revealing balance: target history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/transfers/account/{{targetAccountNumber}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "pm.test('State read succeeds', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json().data;",
+                  "pm.expect(data).to.be.an('array');",
+                  "data.sort((a,b) => a.id-b.id);",
+                  "const before = JSON.parse(pm.collectionVariables.get('targetHistoryBefore'));",
+                  "pm.test('Rejected transfer preserves target history', () => pm.expect(data).to.deep.eql(before));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -691,16 +2348,25 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Probe\",\n    \"lastName\": \"Exposure\",\n    \"email\": \"probe.exposure@digibank.test\",\n    \"identityNumber\": \"\"\n}"
+              "raw": "{\n    \"firstName\": \"Probe\",\n    \"lastName\": \"Exposure\",\n    \"email\": \"probe.exposure+{{runId}}@digibank.test\",\n    \"identityNumber\": \"\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ]
             }
           }
         }
@@ -731,36 +2397,70 @@
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/api/v1/customers/{{customerId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "customers", "{{customerId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers",
+                "{{customerId}}"
+              ]
             }
           }
         },
         {
-          "name": "Swagger UI disabled outside development (ci/profile)",
+          "name": "OpenAPI disabled outside development (ci/profile)",
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "pm.test('API docs are not exposed when running in ci profile', function () {",
-                  "    const body = pm.response.json();",
-                  "    pm.expect(body).to.have.property('message');",
-                  "    const text = pm.response.text().toLowerCase();",
-                  "    pm.expect(text).to.not.include('swagger');",
-                  "    pm.expect(text).to.not.include('openapi');",
-                  "});"
+                  "pm.test('API docs return 404 in ci profile', () => { pm.response.to.have.status(404); pm.expect(pm.response.json().success).to.eql(false); pm.expect(pm.response.json().message).to.eql('Resource not found'); });"
                 ]
               }
             }
           ],
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api-docs",
-              "host": ["{{baseUrl}}"],
-              "path": ["api-docs"]
+            "url": "{{baseUrl}}/v3/api-docs"
+          }
+        },
+        {
+          "name": "Swagger disabled in ci: /swagger-ui.html",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('API docs return 404 in ci profile', () => { pm.response.to.have.status(404); pm.expect(pm.response.json().success).to.eql(false); pm.expect(pm.response.json().message).to.eql('Resource not found'); });"
+                ]
+              }
             }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/swagger-ui.html"
+          }
+        },
+        {
+          "name": "Swagger disabled in ci: /swagger-ui/index.html",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('API docs return 404 in ci profile', () => { pm.response.to.have.status(404); pm.expect(pm.response.json().success).to.eql(false); pm.expect(pm.response.json().message).to.eql('Resource not found'); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/swagger-ui/index.html"
           }
         }
       ]

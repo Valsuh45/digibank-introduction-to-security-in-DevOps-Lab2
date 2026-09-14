@@ -54,3 +54,10 @@ dast/reports/
 # Python verification helper bytecode
 __pycache__/
 *.py[cod]
+
+# Reproducible container evidence is generated locally and uploaded in CI.
+/container-security/reports/*
+!/container-security/reports/.gitkeep
+/dependency-tree.txt
+/docker-image-inspect.json
+/docker-image-history.txt

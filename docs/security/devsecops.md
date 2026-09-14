@@ -63,14 +63,15 @@ The parent `pom.xml` configures the OWASP Dependency-Check Maven plugin to ident
 vulnerabilities in direct and transitive dependencies. It generates an HTML report, skips
 provided and test scopes, and fails the build on any finding with CVSS >= 7
 (`failBuildOnCVSS=7`). The NVD API key is read from the `NVD_API_KEY` environment variable and
-is never committed to the repository.
+must not be committed. A literal was removed during the security-gap fix; its owner must rotate it because it remains in Git history.
 
 Like SpotBugs and PMD, Dependency-Check is **not** bound to the default `verify` lifecycle, so a
 normal `mvn clean verify` stays fast and does not require network access to the NVD. It runs
 explicitly, both locally and in the dedicated CI job:
 
 ```bash
-mvn -B org.owasp:dependency-check-maven:check
+mvn -B clean install -DskipTests
+mvn -B org.owasp:dependency-check-maven:aggregate
 ```
 
 The HTML report is written to `target/dependency-check-report.html`. Findings that are
@@ -101,21 +102,20 @@ of external scanner services; run the analysis explicitly from the repository ro
 
 ```bash
 mvn -B clean install -DskipTests
-mvn -B org.owasp:dependency-check-maven:check -DnvdApiKey="$NVD_API_KEY"
-mvn -B org.pitest:pitest-maven:mutationCoverage
+mvn -B org.owasp:dependency-check-maven:aggregate
+mvn -B -pl customer-module,account-module,transfer-module org.pitest:pitest-maven:mutationCoverage
 mvn -B verify sonar:sonar \
   -Dsonar.projectKey=digibank-parent \
-  -Dsonar.host.url="${SONAR_HOST_URL:-http://localhost:9000}" \
-  -Dsonar.token="$SONAR_TOKEN"
+  -Dsonar.qualitygate.wait=true
 ```
 
 Dependency-Check produces `target/dependency-check-report.html`; PITest produces reports under
-`target/pit-reports`. SonarQube requires a running local/server instance and a token supplied through
+`<module>/target/pit-reports`. SonarQube requires a running local/server instance and a token supplied through
 the environment. Tokens and NVD credentials must never be committed to Maven files, YAML files, or
 the repository.
 
 The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
-artifacts. The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a developer machine is not reachable from a hosted runner.
+artifacts. The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. The SonarQube job now requires an externally reachable server, a `SONAR_TOKEN` secret, and `SONAR_HOST_URL` / `SONAR_PROJECT_KEY` variables. Missing configuration fails the job; untrusted fork PRs skip that credential-dependent job. The scanner waits for the server quality gate.
 
 ## Automated Dependency Updates
 
@@ -189,7 +189,7 @@ CI uploads these as the `pmd-reports` artifact even when the gate fails.
 
 **CPD decision:** copy/paste detection is deferred to a follow-up. Similar DTOs and mapping
 code across modules need a separately reviewed duplication threshold and exclusions before
-CPD becomes a blocking gate. PMD is the only new gate in this change.
+CPD becomes a blocking gate. This was the scope of the original PMD change; the additional controls below now run separately.
 
 ## Workshop 1 Trust Boundary
 
@@ -201,8 +201,7 @@ Workshop 1 evidence and any execution limitations are recorded in [the evidence 
 
 Workshop 3 adds runtime security analysis. The API error handler no longer echoes internal exception
 messages: not-found and business failures return generic text (`Resource not found`,
-`Request could not be processed`) while the real reason is logged server-side. This stops callers from
-enumerating identifiers or probing for the existence of data. Customer duplicate and not-found
+`Request could not be processed`) while the real reason is logged server-side. This reduces error detail; differing HTTP statuses still reveal resource existence, so it is not an authorization or enumeration control. Customer duplicate and not-found
 messages were made generic, and the identity number now has a structural `@Pattern` constraint.
 
 Interactive API documentation is enabled in the `dev` profile and disabled in the `prod` and `ci`
@@ -212,3 +211,30 @@ DAST artifacts (a Newman-ready Postman validation collection, an environment, an
 live under `dast/`. A dedicated CI workflow (`.github/workflows/digibank-dast.yml`) replays the Newman
 collection as a blocking check and runs an OWASP ZAP baseline as an observation-level scan. See
 [`dast.md`](dast.md) for the full findings, remediations, and revalidation.
+
+## Coverage, style, mutation and secret gates
+
+`mvn -B clean verify` runs tests, JaCoCo and Checkstyle. JaCoCo emits per-module reports and
+`digibank-web/target/site/jacoco-aggregate/jacoco.xml`, combining domain tests and web integration
+execution data for SonarQube. The local service-class check requires 80% line and 70% branch
+coverage from each module's own tests. Aggregate coverage is reported separately rather than
+silently inflating the unit-test gate. Checkstyle enforces the small reviewed `checkstyle.xml`
+convention for production and test Java (imports, tabs, final newline and basic statements).
+
+PIT mutates handwritten services in customer, account and transfer modules, using same-module
+tests. It requires 80% mutation score and 90% line coverage per module; missing mutations fail.
+These are initial repository policy values, not percentages mandated by the course. Read surviving
+mutants before changing the thresholds. HTTP/JPA rollback tests remain separate evidence because
+mocked service tests cannot prove a real database transaction rolls back.
+
+Gitleaks 8.24.3 checks current source with built-in rules plus an NVD UUID rule, redacting findings.
+The manual CI `audit_history` option scans all fetched history and fails on findings. The current
+source check does not certify clean history. Two historical NVD findings still require owner
+rotation; no fingerprint allowlist or history rewrite hides them.
+
+See [security-gap verification](../evidence/security-gap-fixes.md) for measured results and
+external setup. Tool contracts: [JaCoCo](https://www.jacoco.org/jacoco/trunk/doc/maven.html),
+[PIT](https://pitest.org/quickstart/maven/),
+[Checkstyle](https://maven.apache.org/plugins/maven-checkstyle-plugin/usage.html),
+[Gitleaks](https://github.com/gitleaks/gitleaks), and
+[SonarQube quality gates](https://docs.sonarsource.com/sonarqube-server/devops-platform-integration/github-integration/adding-analysis-to-github-actions-workflow).

@@ -11,13 +11,13 @@
 set -euo pipefail
 
 echo "==> 1/6 Clean Maven build and tests"
-mvn clean verify
+mvn clean install
 
 echo "==> 2/6 Export dependency tree"
 mvn dependency:tree > dependency-tree.txt
 
 echo "==> 3/6 OWASP Dependency-Check (fails on CVSS >= 7)"
-mvn org.owasp:dependency-check-maven:check
+mvn org.owasp:dependency-check-maven:aggregate
 
 echo "==> 4/6 Build Docker image"
 docker build -t digibank:local .
@@ -27,6 +27,7 @@ docker image inspect digibank:local > docker-image-inspect.json
 docker history digibank:local --no-trunc > docker-image-history.txt
 
 echo "==> 6/6 Trivy image scan (HIGH/CRITICAL, exit 1 on findings)"
-trivy image --severity HIGH,CRITICAL --exit-code 1 digibank:local
+mkdir -p container-security/reports
+trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --output container-security/reports/trivy-image.txt digibank:local
 
 echo "Workshop 4 local verification completed successfully."
