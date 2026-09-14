@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OWASP Dependency-Check suppressions for DigiBank.
+
+  Each entry documents why a reported finding is accepted for this educational codebase.
+  Suppressions are scoped as narrowly as possible (by CPE / CVE) and must include a
+  justification. Do not add broad suppressions to hide real findings.
+-->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <!-- Known Spring Framework 6.2.19 CVE; scoped to spring-framework package.
          Expires 2026-12-31; remove when patches are available. -->

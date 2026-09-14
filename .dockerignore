@@ -15,3 +15,10 @@
 .env.*
 docker-compose.override.yml
 docs/evidence/screenshots
+dependency-check-report.html
+dependency-check-report.json
+dependency-tree.txt
+docker-image-inspect.json
+docker-image-history.txt
+container-security/reports
+container-security/notes

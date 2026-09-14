@@ -35,13 +35,14 @@ management:
       exposure:
         include: health
 
-# OpenAPI / Swagger UI is enabled by default for local development. Other profiles (prod, ci) turn it
-# off so the interactive documentation is only exposed where it is genuinely useful.
+# OpenAPI / Swagger is disabled by default to reduce the exposed attack surface outside
+# development. It is re-enabled only under the `dev` profile (see below) and under the
+# `test` profile (application-test.yml) so the documentation contract can still be verified.
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
   swagger-ui:
-    enabled: true
+    enabled: false
     path: /swagger-ui.html
 
 ---
@@ -51,6 +52,14 @@ spring:
       on-profile: dev
   datasource:
     driver-class-name: org.postgresql.Driver
+
+# Interactive API documentation is a development convenience only. It stays available in the
+# dev profile for local work and is disabled in every other environment by default.
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
 
 logging:
   level:

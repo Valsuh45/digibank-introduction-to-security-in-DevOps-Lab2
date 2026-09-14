@@ -51,8 +51,48 @@ GitHub Actions runs:
 - Trivy filesystem scan for vulnerabilities, secrets, and misconfigurations.
 - Trivy container image scan.
 - Docker Compose smoke test against health, OpenAPI, and transfer workflow endpoints.
+- A dedicated container and dependency security pipeline (`.github/workflows/digibank-security-pipeline.yml`)
+  that rebuilds the project, runs OWASP Dependency-Check, builds the Docker image, scans it with Trivy,
+  and publishes the dependency-check report, dependency tree, and image metadata as artifacts.
 
 These checks make the security evidence reproducible outside a local developer machine.
+
+## Dependency Analysis with OWASP Dependency-Check
+
+The parent `pom.xml` configures the OWASP Dependency-Check Maven plugin to identify known
+vulnerabilities in direct and transitive dependencies. It generates an HTML report, skips
+provided and test scopes, and fails the build on any finding with CVSS >= 7
+(`failBuildOnCVSS=7`). The NVD API key is read from the `NVD_API_KEY` environment variable and
+is never committed to the repository.
+
+Like SpotBugs and PMD, Dependency-Check is **not** bound to the default `verify` lifecycle, so a
+normal `mvn clean verify` stays fast and does not require network access to the NVD. It runs
+explicitly, both locally and in the dedicated CI job:
+
+```bash
+mvn -B org.owasp:dependency-check-maven:check
+```
+
+The HTML report is written to `target/dependency-check-report.html`. Findings that are
+confirmed false positives or accepted, documented risks for this educational codebase are
+suppressed in [`dependency-check-suppressions.xml`](../../dependency-check-suppressions.xml) at
+the repository root, scoped as narrowly as possible with a justification for each entry.
+
+## Container Hardening
+
+The Docker image is built with a multi-stage Dockerfile: a Maven build stage produces the jar,
+and a slim `eclipse-temurin:17-jre-alpine` runtime stage copies only the runnable artifact. The
+runtime image upgrades Alpine packages and runs the application as an unprivileged `digibank`
+user, which reduces the container attack surface and limits the impact of an application
+compromise. `.dockerignore` keeps Git metadata, logs, environment files, and local reports out
+of the build context.
+
+## Swagger / OpenAPI Exposure by Environment
+
+Interactive API documentation is a development convenience and is therefore **disabled by
+default**. It is re-enabled only under the `dev` profile (and the `test` profile so the
+documentation contract can be verified). This keeps the exposed surface minimal outside
+development while preserving the documentation experience locally.
 
 ## Workshop 2 SAST Commands
 
@@ -75,7 +115,7 @@ the environment. Tokens and NVD credentials must never be committed to Maven fil
 the repository.
 
 The CI workflow runs Dependency-Check and PITest as separate jobs and uploads their reports as
-The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a developer machine is not reachable from a hosted runner.
+artifacts. The Dependency-Check step remains blocking; the time-bounded Spring Framework/Boot CVEs are allowed through the version/package-scoped suppressions in `dependency-check-suppressions.xml` while remaining visible in reports. Unsuppressed findings and NVD/scanner errors fail the job. Local SonarQube is intentionally not run in GitHub Actions because `localhost` on a developer machine is not reachable from a hosted runner.
 
 ## Automated Dependency Updates
 
