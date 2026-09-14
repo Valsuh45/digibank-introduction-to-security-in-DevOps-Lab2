@@ -38,21 +38,21 @@
         <jackson-bom.version>2.21.4</jackson-bom.version>
         <micrometer.version>1.15.12</micrometer.version>
         <springdoc-openapi.version>2.8.16</springdoc-openapi.version>
-        <swagger-annotations.version>2.2.43</swagger-annotations.version>
+        <swagger-annotations.version>2.2.55</swagger-annotations.version>
         <postgresql.version>42.7.12</postgresql.version>
         <spring-data-bom.version>2025.0.12</spring-data-bom.version>
         <spring-framework.version>6.2.19</spring-framework.version>
         <tomcat.version>10.1.59</tomcat.version>
-        <cucumber.version>7.15.0</cucumber.version>
-        <lombok.version>1.18.46</lombok.version>
-        <spotbugs-maven-plugin.version>4.9.3.2</spotbugs-maven-plugin.version>
+        <cucumber.version>7.34.8</cucumber.version>
+        <lombok.version>1.18.48</lombok.version>
+        <spotbugs-maven-plugin.version>4.10.4.1</spotbugs-maven-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
         <dependency-check.version>12.1.0</dependency-check.version>
-        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
         <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
-        <pitest-maven.version>1.19.0</pitest-maven.version>
-        <pitest-junit5-plugin.version>1.2.2</pitest-junit5-plugin.version>
+        <pitest-maven.version>1.30.0</pitest-maven.version>
+        <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
     </properties>
 
     <modules>
